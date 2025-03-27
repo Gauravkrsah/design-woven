@@ -1,31 +1,33 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Play } from 'lucide-react';
 
-const blogPosts = [
+const videos = [
   {
     id: 1,
-    title: 'Building Scalable Web Applications with Next.js',
-    excerpt: 'Learn how to build performant and scalable web applications using Next.js and React...',
-    imageUrl: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80',
+    title: 'Building a Modern AI Application with React & Python',
+    views: '18K views',
+    time: '3 months ago',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80',
     link: '#',
   },
   {
     id: 2,
-    title: 'Machine Learning in Production: Best Practices',
-    excerpt: 'A comprehensive guide to deploying and maintaining ML models in production environments...',
-    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+    title: 'Advanced TypeScript Patterns for Enterprise Apps',
+    views: '9K views',
+    time: '1 month ago',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
     link: '#',
   },
 ];
 
-const Blog: React.FC = () => {
+const Videos: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   
   return (
     <section 
-      id="blog" 
+      id="videos" 
       className="py-20 bg-black"
       ref={(el) => {
         if (el) {
@@ -46,14 +48,14 @@ const Blog: React.FC = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="h-4 w-4 bg-blue-500 rounded-full"></span>
+              <span className="h-4 w-4 bg-red-500 rounded-full"></span>
               <h2 
                 className={cn(
                   "text-2xl font-bold tracking-tight text-white transition-all duration-700",
                   isVisible ? "opacity-100" : "opacity-0 translate-y-4"
                 )}
               >
-                Latest Blog Posts
+                Latest Videos
               </h2>
             </div>
             <p 
@@ -62,7 +64,7 @@ const Blog: React.FC = () => {
                 isVisible ? "opacity-100" : "opacity-0 translate-y-4"
               )}
             >
-              Thoughts, tutorials, and insights
+              Educational content and tech insights
             </p>
           </div>
           
@@ -73,15 +75,15 @@ const Blog: React.FC = () => {
               isVisible ? "opacity-100" : "opacity-0"
             )}
           >
-            View all posts <ArrowRight className="h-3 w-3" />
+            View all videos <ArrowRight className="h-3 w-3" />
           </a>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-          {blogPosts.map((post, index) => (
+          {videos.map((video, index) => (
             <a 
-              href={post.link} 
-              key={post.id}
+              href={video.link} 
+              key={video.id}
               className={cn(
                 "transition-all duration-700 group",
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
@@ -89,21 +91,30 @@ const Blog: React.FC = () => {
               style={{ transitionDelay: `${index * 100 + 300}ms` }}
             >
               <div className="bg-[#111] rounded-xl overflow-hidden border border-gray-800 h-full">
-                <div className="aspect-video overflow-hidden">
+                <div className="aspect-video relative overflow-hidden">
                   <img 
-                    src={post.imageUrl} 
-                    alt={post.title} 
+                    src={video.thumbnailUrl} 
+                    alt={video.title} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="h-14 w-14 rounded-full bg-red-600 flex items-center justify-center">
+                      <Play className="h-6 w-6 text-white" fill="white" />
+                    </div>
+                  </div>
+                  <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded-sm">
+                    New Video
+                  </div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-500 transition-colors">
-                    {post.title}
+                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">
+                    {video.title}
                   </h3>
-                  <p className="text-gray-400 text-sm">{post.excerpt}</p>
                   
-                  <div className="mt-4 flex justify-between items-center">
-                    <span className="text-sm text-gray-500">Read more</span>
+                  <div className="mt-4 flex items-center text-sm text-gray-500">
+                    <span>{video.views}</span>
+                    <span className="mx-2">•</span>
+                    <span>{video.time}</span>
                   </div>
                 </div>
               </div>
@@ -115,4 +126,4 @@ const Blog: React.FC = () => {
   );
 };
 
-export default Blog;
+export default Videos;

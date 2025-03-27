@@ -2,39 +2,29 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 
-const experiences = [
+const educationData = [
   {
     id: 1,
-    title: 'Senior ML Engineer',
-    company: 'Resonant Inc.',
-    period: '2022 - Present',
-    description: 'Leading machine learning platform design and implementation while building advanced models for predictive analytics and optimization.',
-    skills: ['Python', 'TensorFlow', 'PyTorch', 'MLOps', 'Data Analysis'],
+    degree: "Ph.D. in Computer Science",
+    institution: "Western University",
+    period: "2020",
+    skills: []
   },
   {
     id: 2,
-    title: 'Python Developer',
-    company: 'Pure Streamline Inc.',
-    period: '2019 - 2021',
-    description: 'Developed recommendation systems and machine learning models for predictive analytics.',
-    skills: ['Python', 'Machine Learning', 'Deep Learning', 'NLP'],
-  },
-  {
-    id: 3,
-    title: 'Junior Data Scientist',
-    company: 'Golden Solutions',
-    period: '2017 - 2019',
-    description: 'Utilized statistical tools and machine learning algorithms to transform raw data into valuable insights to solve business problems.',
-    skills: ['Python', 'Statistical Modeling', 'Data Visualization', 'SQL'],
-  },
+    degree: "M.S. in Machine Learning",
+    institution: "Stanford University",
+    period: "2016",
+    skills: ["Python", "TensorFlow", "PyTorch", "Data Analysis", "Natural Language Processing", "Deep Learning", "ML", "Neural Computing"]
+  }
 ];
 
-const Experience: React.FC = () => {
+const Education: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   
   return (
     <section 
-      id="experience" 
+      id="education" 
       className="py-10 relative"
       ref={(el) => {
         if (el) {
@@ -58,29 +48,28 @@ const Experience: React.FC = () => {
             isVisible ? "opacity-100" : "opacity-0 translate-y-4"
           )}
         >
-          Experience
+          Education & Skills
         </h2>
         
         <div className="space-y-6">
-          {experiences.map((exp) => (
+          {educationData.map((edu) => (
             <div 
-              key={exp.id}
+              key={edu.id}
               className={cn(
                 "bg-[#111] p-4 rounded-lg border border-gray-800 transition-all duration-700",
                 isVisible ? "opacity-100" : "opacity-0 translate-y-8"
               )}
-              style={{ transitionDelay: `${(exp.id - 1) * 100 + 200}ms` }}
+              style={{ transitionDelay: `${(edu.id - 1) * 100 + 200}ms` }}
             >
               <div className="flex justify-between items-start mb-1">
-                <h3 className="font-bold text-white">{exp.title}</h3>
-                <span className="text-blue-500">{exp.period}</span>
+                <h3 className="font-bold text-white">{edu.degree}</h3>
+                <span className="text-blue-500">{edu.period}</span>
               </div>
-              <p className="text-gray-400 mb-2">{exp.company}</p>
-              <p className="text-gray-300 text-sm">{exp.description}</p>
+              <p className="text-gray-400 mb-2">{edu.institution}</p>
               
-              {exp.skills.length > 0 && (
+              {edu.skills.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {exp.skills.map((skill) => (
+                  {edu.skills.map((skill) => (
                     <span 
                       key={skill} 
                       className="text-xs px-2 py-1 bg-gray-800 rounded-md text-gray-300"
@@ -98,4 +87,4 @@ const Experience: React.FC = () => {
   );
 };
 
-export default Experience;
+export default Education;

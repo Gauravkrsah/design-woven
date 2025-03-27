@@ -25,15 +25,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   return (
     <div 
       className={cn(
-        "group relative overflow-hidden rounded-lg bg-card text-card-foreground transition-all duration-300 ease-in-out",
-        "border border-border/40 hover:border-border/80",
+        "group relative overflow-hidden rounded-xl bg-[#111] text-white transition-all duration-300 ease-in-out",
+        "border border-gray-800 hover:border-gray-700",
         "transform hover:-translate-y-1 hover:shadow-xl",
         className
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="aspect-video w-full overflow-hidden bg-muted">
+      <div className="aspect-video w-full overflow-hidden bg-gray-900">
         <img
           src={imageUrl}
           alt={title}
@@ -46,15 +46,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       </div>
       
       <div className="flex flex-col space-y-2 p-6">
-        <h3 className="font-medium text-xl tracking-tight">{title}</h3>
+        <h3 className="font-medium text-xl tracking-tight text-white">{title}</h3>
         
-        <p className="text-muted-foreground line-clamp-2 text-sm">{description}</p>
+        <p className="text-gray-400 line-clamp-2 text-sm">{description}</p>
         
         <div className="flex flex-wrap gap-2 pt-2">
           {tags.map((tag) => (
             <span 
               key={tag} 
-              className="text-xs px-2 py-1 bg-secondary rounded-full text-secondary-foreground"
+              className="text-xs px-2 py-1 bg-gray-800 rounded-md text-gray-300"
             >
               {tag}
             </span>
@@ -65,7 +65,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           href={link} 
           className={cn(
             "inline-flex items-center text-sm font-medium mt-4",
-            "text-primary hover:text-primary/80 transition-colors",
+            "text-blue-500 hover:text-blue-400 transition-colors",
             "group-hover:underline"
           )}
         >

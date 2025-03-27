@@ -6,7 +6,8 @@ import Hero from '@/components/sections/Hero';
 import Experience from '@/components/sections/Experience';
 import Projects from '@/components/sections/Projects';
 import Blog from '@/components/sections/Blog';
-import Contact from '@/components/sections/Contact';
+import Videos from '@/components/sections/Videos';
+import Education from '@/components/sections/Education';
 
 const Index: React.FC = () => {
   useEffect(() => {
@@ -14,15 +15,18 @@ const Index: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-black text-white">
       <Navbar />
       
       <main className="flex-grow">
         <Hero />
-        <Experience />
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Experience />
+          <Education />
+        </div>
         <Projects />
         <Blog />
-        <Contact />
+        <Videos />
       </main>
       
       <Footer />
