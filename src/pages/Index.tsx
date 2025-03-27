@@ -11,9 +11,13 @@ const Index: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-black text-white">
-      <LeftSidebar />
+      <div className="sticky top-0 h-screen">
+        <LeftSidebar />
+      </div>
       <MainContent />
-      <RightSidebar />
+      <div className="sticky top-0 h-screen">
+        <RightSidebar />
+      </div>
     </div>
   );
 };

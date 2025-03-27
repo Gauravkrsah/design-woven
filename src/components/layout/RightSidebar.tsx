@@ -1,25 +1,35 @@
 
 import React from 'react';
-import { Sparkles, Download, FileText, MessageCircle } from 'lucide-react';
+import { Sparkles, Download, FileText, MessageCircle, ExternalLink } from 'lucide-react';
 
 const ToolCard = ({ 
   title, 
-  description 
+  description,
+  link,
 }: { 
   title: string; 
   description: string;
+  link: string;
 }) => {
   return (
-    <div className="p-4 rounded-lg bg-gray-900 hover:bg-gray-800 transition-colors mb-4">
-      <h3 className="text-white font-medium mb-1">{title}</h3>
+    <a 
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block p-4 rounded-lg bg-gray-900 hover:bg-gray-800 transition-colors mb-4 group"
+    >
+      <div className="flex justify-between items-start">
+        <h3 className="text-white font-medium mb-1">{title}</h3>
+        <ExternalLink className="w-3 h-3 text-gray-500 group-hover:text-white transition-colors" />
+      </div>
       <p className="text-gray-400 text-sm">{description}</p>
-    </div>
+    </a>
   );
 };
 
 const RightSidebar: React.FC = () => {
   return (
-    <aside className="w-72 min-h-screen bg-black border-l border-gray-800 p-6 overflow-auto">
+    <aside className="w-72 h-screen bg-black border-l border-gray-800 p-6 overflow-auto">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center text-amber-400 gap-2">
           <Sparkles className="w-4 h-4" />
@@ -31,11 +41,25 @@ const RightSidebar: React.FC = () => {
         <ToolCard 
           title="AI Interview Questions"
           description="Smart tool that generates role-specific interview questions for candidates"
+          link="https://ai-interview-questions.example.com"
         />
         
         <ToolCard 
           title="Job Description Generator"
           description="Automated tool that creates professional job descriptions from simple inputs"
+          link="https://jd-generator.example.com"
+        />
+
+        <ToolCard 
+          title="Developer Roadmap"
+          description="Interactive roadmap to help developers navigate their learning journey"
+          link="https://dev-roadmap.example.com"
+        />
+
+        <ToolCard 
+          title="Code Snippet Library"
+          description="Collection of reusable code snippets for common programming tasks"
+          link="https://snippets.example.com"
         />
       </div>
 
