@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Sparkles, Download, FileText, MessageCircle, ExternalLink } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const ToolCard = ({ 
   title, 
@@ -28,6 +29,20 @@ const ToolCard = ({
 };
 
 const RightSidebar: React.FC = () => {
+  const isMobile = useIsMobile();
+  
+  const handleChatClick = () => {
+    if (window.openChatPopup) {
+      window.openChatPopup();
+    }
+  };
+  
+  const handleMessageClick = () => {
+    if (window.openMessagePopup) {
+      window.openMessagePopup();
+    }
+  };
+
   return (
     <aside className="w-72 h-screen bg-black border-l border-gray-800 p-6 overflow-auto">
       <div className="flex items-center justify-between mb-6">
@@ -64,21 +79,30 @@ const RightSidebar: React.FC = () => {
       </div>
 
       <div className="mt-6 flex flex-col gap-3">
-        <button className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md px-4 py-3 transition-colors">
-          <Download className="w-5 h-5" />
-          <span>Resume</span>
+        <button 
+          className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md px-4 py-3 transition-colors"
+          onClick={handleMessageClick}
+        >
+          <MessageCircle className="w-5 h-5" />
+          <span>Message Me</span>
         </button>
         <button className="flex items-center justify-center gap-2 bg-transparent border border-gray-700 hover:bg-gray-800 text-white rounded-md px-4 py-3 transition-colors">
-          <FileText className="w-5 h-5" />
-          <span>View CV</span>
+          <Download className="w-5 h-5" />
+          <span>Download CV</span>
         </button>
       </div>
 
-      <div className="fixed bottom-6 right-6">
-        <button className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-500 transition-colors">
-          <MessageCircle className="w-6 h-6" />
-        </button>
-      </div>
+      {!isMobile && (
+        <div className="fixed bottom-6 right-6 z-10">
+          <button 
+            onClick={handleChatClick} 
+            className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-500 transition-colors"
+            aria-label="Open chat"
+          >
+            <MessageCircle className="w-6 h-6" />
+          </button>
+        </div>
+      )}
     </aside>
   );
 };
