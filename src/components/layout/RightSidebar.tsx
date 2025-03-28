@@ -17,13 +17,13 @@ const ToolCard = ({
       href={link}
       target="_blank"
       rel="noopener noreferrer"
-      className="block p-4 rounded-lg bg-gray-900 hover:bg-gray-800 transition-colors mb-4 group"
+      className="block p-3 rounded-lg bg-gray-900 hover:bg-gray-800 transition-colors mb-2 group"
     >
       <div className="flex justify-between items-start">
-        <h3 className="text-white font-medium mb-1">{title}</h3>
+        <h3 className="text-white text-sm font-medium mb-1">{title}</h3>
         <ExternalLink className="w-3 h-3 text-gray-500 group-hover:text-white transition-colors" />
       </div>
-      <p className="text-gray-400 text-sm">{description}</p>
+      <p className="text-gray-400 text-xs line-clamp-2">{description}</p>
     </a>
   );
 };
@@ -38,15 +38,15 @@ const RightSidebar: React.FC = () => {
   };
 
   return (
-    <aside className="w-72 h-screen bg-black border-l border-gray-800 p-6 overflow-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center text-amber-400 gap-2">
-          <Sparkles className="w-4 h-4" />
-          <span className="text-sm font-medium">Tools I Made</span>
+    <aside className="w-56 h-screen bg-black border-l border-gray-800 p-4 overflow-auto">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center text-amber-400 gap-1.5">
+          <Sparkles className="w-3 h-3" />
+          <span className="text-xs font-medium">Tools I Made</span>
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         <ToolCard 
           title="AI Interview Questions"
           description="Smart tool that generates role-specific interview questions for candidates"
@@ -73,13 +73,13 @@ const RightSidebar: React.FC = () => {
       </div>
 
       {!isMobile && (
-        <div className="fixed bottom-6 right-6 z-10">
+        <div className="fixed bottom-4 right-4 z-10">
           <button 
             onClick={handleChatClick} 
-            className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-500 transition-colors"
+            className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-500 transition-colors"
             aria-label="Open chat"
           >
-            <MessageCircle className="w-6 h-6" />
+            <MessageCircle className="w-5 h-5" />
           </button>
         </div>
       )}

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface BlogPostCardProps {
   title: string;
@@ -29,15 +30,15 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
       className={cn(
         "group relative overflow-hidden bg-card text-card-foreground rounded-lg",
         "border border-border/40 hover:border-border/80",
-        "transition-all duration-300 ease-in-out",
-        "transform hover:-translate-y-1 hover:shadow-lg",
+        "transition-all duration-300",
+        "hover:-translate-y-1 hover:shadow-lg",
         className
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {imageUrl && (
-        <div className="relative aspect-[2/1] w-full overflow-hidden">
+        <div className="relative aspect-[4/3] w-full overflow-hidden">
           <img
             src={imageUrl}
             alt={title}
@@ -50,43 +51,43 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
         </div>
       )}
       
-      <div className="flex flex-col p-6 space-y-3">
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
+      <div className="flex flex-col p-3 space-y-2">
+        <div>
+          <div className="flex items-center justify-between mb-1">
             {tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1">
                 {tags.slice(0, 2).map((tag) => (
                   <span 
                     key={tag} 
-                    className="text-xs px-2 py-0.5 bg-secondary rounded-full text-secondary-foreground"
+                    className="text-[10px] px-1.5 py-0.5 bg-secondary rounded-full text-secondary-foreground"
                   >
                     {tag}
                   </span>
                 ))}
                 {tags.length > 2 && (
-                  <span className="text-xs text-muted-foreground">+{tags.length - 2}</span>
+                  <span className="text-[10px] text-muted-foreground">+{tags.length - 2}</span>
                 )}
               </div>
             )}
-            <time className="text-xs text-muted-foreground">{date}</time>
+            <time className="text-[10px] text-muted-foreground">{date}</time>
           </div>
           
-          <h3 className="font-medium text-lg tracking-tight">{title}</h3>
+          <h3 className="font-medium text-sm tracking-tight">{title}</h3>
         </div>
         
-        <p className="text-muted-foreground text-sm line-clamp-2">{excerpt}</p>
+        <p className="text-muted-foreground text-xs line-clamp-2">{excerpt}</p>
         
-        <a 
-          href={link} 
+        <Link 
+          to={link} 
           className={cn(
-            "inline-flex items-center pt-2 text-sm font-medium",
+            "inline-flex items-center text-xs font-medium",
             "text-primary hover:text-primary/80 transition-colors",
             "group-hover:underline"
           )}
         >
           Read more
-          <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </a>
+          <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
+        </Link>
       </div>
     </div>
   );

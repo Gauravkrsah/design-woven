@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface ProjectCardProps {
   title: string;
@@ -25,53 +26,56 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   return (
     <div 
       className={cn(
-        "group relative overflow-hidden rounded-xl bg-[#111] text-white transition-all duration-300 ease-in-out",
+        "group relative overflow-hidden rounded-lg bg-[#111] text-white transition-all duration-300",
         "border border-gray-800 hover:border-gray-700",
-        "transform hover:-translate-y-1 hover:shadow-xl",
+        "hover:-translate-y-1 hover:shadow-xl",
         className
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="aspect-video w-full overflow-hidden bg-gray-900">
+      <div className="aspect-[4/3] w-full overflow-hidden bg-gray-900">
         <img
           src={imageUrl}
           alt={title}
           className={cn(
-            "h-full w-full object-cover transition-transform duration-500 ease-out",
+            "h-full w-full object-cover transition-transform duration-500",
             isHovered ? "scale-105" : "scale-100"
           )}
           loading="lazy"
         />
       </div>
       
-      <div className="flex flex-col space-y-2 p-6">
-        <h3 className="font-medium text-xl tracking-tight text-white">{title}</h3>
+      <div className="flex flex-col p-3">
+        <h3 className="font-medium text-sm tracking-tight text-white mb-1">{title}</h3>
         
-        <p className="text-gray-400 line-clamp-2 text-sm">{description}</p>
+        <p className="text-gray-400 line-clamp-2 text-xs">{description}</p>
         
-        <div className="flex flex-wrap gap-2 pt-2">
-          {tags.map((tag) => (
+        <div className="flex flex-wrap gap-1 pt-2">
+          {tags.slice(0, 3).map((tag) => (
             <span 
               key={tag} 
-              className="text-xs px-2 py-1 bg-gray-800 rounded-md text-gray-300"
+              className="text-[10px] px-1.5 py-0.5 bg-gray-800 rounded text-gray-300"
             >
               {tag}
             </span>
           ))}
+          {tags.length > 3 && (
+            <span className="text-[10px] text-gray-400">+{tags.length - 3}</span>
+          )}
         </div>
         
-        <a 
-          href={link} 
+        <Link 
+          to={link} 
           className={cn(
-            "inline-flex items-center text-sm font-medium mt-4",
+            "inline-flex items-center text-xs font-medium mt-2",
             "text-blue-500 hover:text-blue-400 transition-colors",
             "group-hover:underline"
           )}
         >
           View Project 
-          <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </a>
+          <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
+        </Link>
       </div>
     </div>
   );

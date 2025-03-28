@@ -74,7 +74,7 @@ const Index: React.FC = () => {
       {/* Mobile navbar - only visible on mobile */}
       <MobileNavbar />
       
-      <div className="flex flex-1 pt-[72px] lg:pt-0">
+      <div className="flex flex-1 pt-[60px] lg:pt-0">
         {/* Left sidebar - hidden on mobile */}
         <div className="hidden lg:block sticky top-0 h-screen">
           <LeftSidebar />
@@ -91,20 +91,20 @@ const Index: React.FC = () => {
       
       {/* Mobile floating action buttons */}
       {isMobile && (
-        <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2">
+        <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
           <Button 
             size="icon" 
-            className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+            className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
             onClick={openMessagePopup}
           >
-            <Mail className="h-5 w-5" />
+            <Mail className="h-4 w-4" />
           </Button>
           <Button 
             size="icon" 
-            className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+            className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
             onClick={openChatPopup}
           >
-            <MessageCircle className="h-5 w-5" />
+            <MessageCircle className="h-4 w-4" />
           </Button>
         </div>
       )}
