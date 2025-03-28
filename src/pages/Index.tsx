@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import LeftSidebar from '@/components/layout/LeftSidebar';
 import RightSidebar from '@/components/layout/RightSidebar';
 import MainContent from '@/components/layout/MainContent';
+import MobileNavbar from '@/components/layout/MobileNavbar';
 import SubscribePopup from '@/components/ui/SubscribePopup';
 import MessagePopup from '@/components/ui/MessagePopup';
 import ChatPopup from '@/components/ui/ChatPopup';
@@ -31,6 +32,11 @@ const Index: React.FC = () => {
     }
   }, [isMobile]);
 
+  // Function to handle subscribe button click from anywhere in the app
+  const openSubscribePopup = () => {
+    setIsSubscribeOpen(true);
+  };
+
   // Function to handle message button click from anywhere in the app
   const openMessagePopup = () => {
     setIsMessageOpen(true);
@@ -43,17 +49,37 @@ const Index: React.FC = () => {
 
   // Make these functions available globally
   React.useEffect(() => {
+    window.openSubscribePopup = openSubscribePopup;
     window.openMessagePopup = openMessagePopup;
     window.openChatPopup = openChatPopup;
     
     return () => {
+      delete window.openSubscribePopup;
       delete window.openMessagePopup;
       delete window.openChatPopup;
     };
   }, []);
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-black text-white">
+    <div className="flex flex-col min-h-screen bg-black text-white">
+      {/* Mobile navbar - only visible on mobile */}
+      <MobileNavbar />
+      
+      <div className="flex flex-1 pt-[72px] lg:pt-0">
+        {/* Left sidebar - hidden on mobile */}
+        <div className="hidden lg:block sticky top-0 h-screen">
+          <LeftSidebar />
+        </div>
+        
+        {/* Main content - always visible */}
+        <MainContent />
+        
+        {/* Right sidebar - hidden on mobile */}
+        <div className="hidden lg:block sticky top-0 h-screen">
+          <RightSidebar />
+        </div>
+      </div>
+      
       {/* Mobile floating action buttons */}
       {isMobile && (
         <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2">
@@ -73,19 +99,6 @@ const Index: React.FC = () => {
           </Button>
         </div>
       )}
-      
-      {/* Left sidebar - hidden on mobile */}
-      <div className="hidden lg:block sticky top-0 h-screen">
-        <LeftSidebar />
-      </div>
-      
-      {/* Main content - always visible */}
-      <MainContent />
-      
-      {/* Right sidebar - hidden on mobile */}
-      <div className="hidden lg:block sticky top-0 h-screen">
-        <RightSidebar />
-      </div>
       
       {/* Popups */}
       <SubscribePopup 

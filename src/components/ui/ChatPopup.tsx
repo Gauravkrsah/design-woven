@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Send, X, Bot, User } from 'lucide-react';
+import { Send, X, Bot, User, Image, Paperclip, Smile } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -93,14 +93,17 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ open, onOpenChange }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md p-0 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 shadow-xl max-h-[80vh] flex flex-col rounded-xl overflow-hidden">
-        <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4 border-b border-gray-700 flex justify-between items-center">
+        <div className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 p-4 border-b border-gray-700 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600/20">
-              <Bot className="h-4 w-4 text-blue-400" />
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600">
+              <Bot className="h-5 w-5 text-white" />
             </div>
             <div>
               <h3 className="text-white font-medium">Chat with Gaurav</h3>
-              <p className="text-gray-400 text-xs">Usually replies within an hour</p>
+              <div className="flex items-center text-green-400 text-xs">
+                <span className="w-2 h-2 bg-green-400 rounded-full mr-1.5"></span>
+                Online now
+              </div>
             </div>
           </div>
           <button 
@@ -117,15 +120,15 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ open, onOpenChange }) => {
               key={message.id} 
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
             >
-              <div className="flex gap-2">
+              <div className="flex gap-2 max-w-[85%]">
                 {message.sender === 'bot' && (
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-blue-600/20 flex items-center justify-center self-end">
-                    <Bot className="h-4 w-4 text-blue-400" />
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center self-end">
+                    <Bot className="h-4 w-4 text-white" />
                   </div>
                 )}
                 
                 <div 
-                  className={`max-w-[80%] p-3 rounded-lg ${
+                  className={`p-3 rounded-xl ${
                     message.sender === 'user' 
                       ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-tr-none' 
                       : 'bg-gradient-to-r from-gray-800 to-gray-700 text-white rounded-tl-none'
@@ -138,8 +141,8 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ open, onOpenChange }) => {
                 </div>
                 
                 {message.sender === 'user' && (
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-blue-600/20 flex items-center justify-center self-end">
-                    <User className="h-4 w-4 text-blue-400" />
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center self-end">
+                    <User className="h-4 w-4 text-white" />
                   </div>
                 )}
               </div>
@@ -149,11 +152,11 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ open, onOpenChange }) => {
           {isTyping && (
             <div className="flex justify-start animate-fade-in">
               <div className="flex gap-2">
-                <div className="flex-shrink-0 h-8 w-8 rounded-full bg-blue-600/20 flex items-center justify-center self-end">
-                  <Bot className="h-4 w-4 text-blue-400" />
+                <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center self-end">
+                  <Bot className="h-4 w-4 text-white" />
                 </div>
                 
-                <div className="bg-gradient-to-r from-gray-800 to-gray-700 text-white p-3 rounded-lg rounded-tl-none max-w-[80%]">
+                <div className="bg-gradient-to-r from-gray-800 to-gray-700 text-white p-3 rounded-xl rounded-tl-none">
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 rounded-full bg-gray-500 animate-bounce" style={{ animationDelay: '0ms' }}></div>
                     <div className="w-2 h-2 rounded-full bg-gray-500 animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -167,15 +170,24 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ open, onOpenChange }) => {
           <div ref={messagesEndRef} />
         </div>
         
-        <form onSubmit={handleSendMessage} className="border-t border-gray-700 p-4 bg-gray-800">
-          <div className="flex space-x-2">
+        <form onSubmit={handleSendMessage} className="border-t border-gray-700 p-4 bg-gray-800/50">
+          <div className="flex items-center space-x-2">
+            <button type="button" className="p-2 text-gray-400 hover:text-white transition-colors">
+              <Paperclip className="h-5 w-5" />
+            </button>
+            <button type="button" className="p-2 text-gray-400 hover:text-white transition-colors">
+              <Image className="h-5 w-5" />
+            </button>
             <Input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Type a message..."
-              className="flex-1 px-4 py-2 rounded-full border border-gray-700 bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 placeholder:text-gray-500"
+              className="flex-1 px-4 py-2 rounded-full border border-gray-700 bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 placeholder:text-gray-500"
             />
+            <button type="button" className="p-2 text-gray-400 hover:text-white transition-colors">
+              <Smile className="h-5 w-5" />
+            </button>
             <Button
               type="submit"
               disabled={!inputValue.trim()}

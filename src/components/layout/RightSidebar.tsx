@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Sparkles, Download, FileText, MessageCircle, ExternalLink } from 'lucide-react';
+import { Sparkles, ExternalLink } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const ToolCard = ({ 
@@ -34,12 +33,6 @@ const RightSidebar: React.FC = () => {
   const handleChatClick = () => {
     if (window.openChatPopup) {
       window.openChatPopup();
-    }
-  };
-  
-  const handleMessageClick = () => {
-    if (window.openMessagePopup) {
-      window.openMessagePopup();
     }
   };
 
@@ -76,20 +69,6 @@ const RightSidebar: React.FC = () => {
           description="Collection of reusable code snippets for common programming tasks"
           link="https://snippets.example.com"
         />
-      </div>
-
-      <div className="mt-6 flex flex-col gap-3">
-        <button 
-          className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md px-4 py-3 transition-colors"
-          onClick={handleMessageClick}
-        >
-          <MessageCircle className="w-5 h-5" />
-          <span>Message Me</span>
-        </button>
-        <button className="flex items-center justify-center gap-2 bg-transparent border border-gray-700 hover:bg-gray-800 text-white rounded-md px-4 py-3 transition-colors">
-          <Download className="w-5 h-5" />
-          <span>Download CV</span>
-        </button>
       </div>
 
       {!isMobile && (
