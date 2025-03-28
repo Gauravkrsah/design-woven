@@ -31,7 +31,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
 }) => {
   return (
     <div className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-gray-700 transition-colors group">
-      <div className="aspect-video relative overflow-hidden">
+      <div className="aspect-[16/9] relative overflow-hidden">
         <img 
           src={imageUrl} 
           alt={title}
@@ -54,8 +54,8 @@ const ContentCard: React.FC<ContentCardProps> = ({
           
           {isVideo && (
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
-                <Play className="h-4 w-4 text-white ml-0.5" fill="white" />
+              <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+                <Play className="h-3 w-3 text-white ml-0.5" fill="white" />
               </div>
             </div>
           )}
@@ -68,13 +68,13 @@ const ContentCard: React.FC<ContentCardProps> = ({
         </div>
       </div>
       
-      <div className="p-3">
-        <h3 className="text-white text-xs font-medium mb-2 line-clamp-2 group-hover:text-blue-400 transition-colors">
+      <div className="p-2">
+        <h3 className="text-white text-xs font-medium mb-1 line-clamp-2 group-hover:text-blue-400 transition-colors">
           {title}
         </h3>
         
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 text-gray-400 hover:text-white transition-colors cursor-pointer">
               <Heart className="w-3 h-3" />
               <span className="text-[10px]">{likes}</span>
@@ -93,9 +93,9 @@ const ContentCard: React.FC<ContentCardProps> = ({
             href={link} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-colors hover:bg-gray-700"
+            className="w-5 h-5 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-colors hover:bg-gray-700"
           >
-            <ExternalLink className="w-3 h-3" />
+            <ExternalLink className="w-2.5 h-2.5" />
           </a>
         </div>
       </div>

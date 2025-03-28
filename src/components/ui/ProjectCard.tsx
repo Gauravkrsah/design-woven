@@ -34,7 +34,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="aspect-[4/3] w-full overflow-hidden bg-gray-900">
+      <div className="aspect-[16/9] w-full overflow-hidden bg-gray-900">
         <img
           src={imageUrl}
           alt={title}
@@ -46,13 +46,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         />
       </div>
       
-      <div className="flex flex-col p-3">
-        <h3 className="font-medium text-sm tracking-tight text-white mb-1">{title}</h3>
+      <div className="flex flex-col p-2">
+        <h3 className="font-medium text-xs tracking-tight text-white mb-1">{title}</h3>
         
-        <p className="text-gray-400 line-clamp-2 text-xs">{description}</p>
+        <p className="text-gray-400 line-clamp-2 text-xs mb-1">{description}</p>
         
-        <div className="flex flex-wrap gap-1 pt-2">
-          {tags.slice(0, 3).map((tag) => (
+        <div className="flex flex-wrap gap-1 mb-1">
+          {tags.slice(0, 2).map((tag) => (
             <span 
               key={tag} 
               className="text-[10px] px-1.5 py-0.5 bg-gray-800 rounded text-gray-300"
@@ -60,15 +60,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               {tag}
             </span>
           ))}
-          {tags.length > 3 && (
-            <span className="text-[10px] text-gray-400">+{tags.length - 3}</span>
+          {tags.length > 2 && (
+            <span className="text-[10px] text-gray-400">+{tags.length - 2}</span>
           )}
         </div>
         
         <Link 
           to={link} 
           className={cn(
-            "inline-flex items-center text-xs font-medium mt-2",
+            "inline-flex items-center text-xs font-medium",
             "text-blue-500 hover:text-blue-400 transition-colors",
             "group-hover:underline"
           )}

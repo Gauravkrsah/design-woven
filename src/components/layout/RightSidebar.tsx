@@ -2,6 +2,7 @@
 import React from 'react';
 import { Sparkles, ExternalLink, MessageCircle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
 
 const ToolCard = ({ 
   title, 
@@ -17,10 +18,10 @@ const ToolCard = ({
       href={link}
       target="_blank"
       rel="noopener noreferrer"
-      className="block p-3 rounded-lg bg-gray-900 hover:bg-gray-800 transition-colors mb-2 group"
+      className="block p-2.5 rounded-lg bg-gray-900 hover:bg-gray-800 transition-colors mb-2 group"
     >
       <div className="flex justify-between items-start">
-        <h3 className="text-white text-sm font-medium mb-1">{title}</h3>
+        <h3 className="text-white text-xs font-medium mb-1">{title}</h3>
         <ExternalLink className="w-3 h-3 text-gray-500 group-hover:text-white transition-colors" />
       </div>
       <p className="text-gray-400 text-xs line-clamp-2">{description}</p>
@@ -46,7 +47,7 @@ const RightSidebar: React.FC = () => {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-2">
         <ToolCard 
           title="AI Interview Questions"
           description="Smart tool that generates role-specific interview questions for candidates"
@@ -74,13 +75,14 @@ const RightSidebar: React.FC = () => {
 
       {!isMobile && (
         <div className="fixed bottom-4 right-4 z-10">
-          <button 
+          <Button 
             onClick={handleChatClick} 
-            className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-500 transition-colors"
+            size="icon"
+            className="h-9 w-9 rounded-full bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg"
             aria-label="Open chat"
           >
-            <MessageCircle className="w-5 h-5" />
-          </button>
+            <MessageCircle className="w-4 h-4" />
+          </Button>
         </div>
       )}
     </aside>

@@ -38,7 +38,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       {imageUrl && (
-        <div className="relative aspect-[4/3] w-full overflow-hidden">
+        <div className="relative aspect-[16/9] w-full overflow-hidden">
           <img
             src={imageUrl}
             alt={title}
@@ -51,12 +51,12 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
         </div>
       )}
       
-      <div className="flex flex-col p-3 space-y-2">
+      <div className="flex flex-col p-2 space-y-1">
         <div>
           <div className="flex items-center justify-between mb-1">
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-1">
-                {tags.slice(0, 2).map((tag) => (
+                {tags.slice(0, 1).map((tag) => (
                   <span 
                     key={tag} 
                     className="text-[10px] px-1.5 py-0.5 bg-secondary rounded-full text-secondary-foreground"
@@ -64,15 +64,15 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
                     {tag}
                   </span>
                 ))}
-                {tags.length > 2 && (
-                  <span className="text-[10px] text-muted-foreground">+{tags.length - 2}</span>
+                {tags.length > 1 && (
+                  <span className="text-[10px] text-muted-foreground">+{tags.length - 1}</span>
                 )}
               </div>
             )}
             <time className="text-[10px] text-muted-foreground">{date}</time>
           </div>
           
-          <h3 className="font-medium text-sm tracking-tight">{title}</h3>
+          <h3 className="font-medium text-xs tracking-tight">{title}</h3>
         </div>
         
         <p className="text-muted-foreground text-xs line-clamp-2">{excerpt}</p>

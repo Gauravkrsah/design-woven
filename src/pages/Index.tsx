@@ -10,6 +10,7 @@ import ChatPopup from '@/components/ui/ChatPopup';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Mail } from 'lucide-react';
+import { ThemeProvider } from '@/hooks/use-theme';
 
 // Extend Window interface to include our custom properties
 declare global {
@@ -70,61 +71,63 @@ const Index: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white">
-      {/* Mobile navbar - only visible on mobile */}
-      <MobileNavbar />
-      
-      <div className="flex flex-1 pt-[60px] lg:pt-0">
-        {/* Left sidebar - hidden on mobile */}
-        <div className="hidden lg:block sticky top-0 h-screen">
-          <LeftSidebar />
+    <ThemeProvider defaultTheme="dark">
+      <div className="flex flex-col min-h-screen bg-background text-foreground">
+        {/* Mobile navbar - only visible on mobile */}
+        <MobileNavbar />
+        
+        <div className="flex flex-1 pt-[60px] lg:pt-0">
+          {/* Left sidebar - hidden on mobile */}
+          <div className="hidden lg:block sticky top-0 h-screen">
+            <LeftSidebar />
+          </div>
+          
+          {/* Main content - always visible */}
+          <MainContent />
+          
+          {/* Right sidebar - hidden on mobile */}
+          <div className="hidden lg:block sticky top-0 h-screen">
+            <RightSidebar />
+          </div>
         </div>
         
-        {/* Main content - always visible */}
-        <MainContent />
+        {/* Mobile floating action buttons */}
+        {isMobile && (
+          <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+            <Button 
+              size="icon" 
+              className="h-9 w-9 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+              onClick={openMessagePopup}
+            >
+              <Mail className="h-4 w-4" />
+            </Button>
+            <Button 
+              size="icon" 
+              className="h-9 w-9 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+              onClick={openChatPopup}
+            >
+              <MessageCircle className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
         
-        {/* Right sidebar - hidden on mobile */}
-        <div className="hidden lg:block sticky top-0 h-screen">
-          <RightSidebar />
-        </div>
+        {/* Popups */}
+        <SubscribePopup 
+          open={isSubscribeOpen} 
+          onOpenChange={setIsSubscribeOpen} 
+        />
+        
+        <MessagePopup 
+          open={isMessageOpen} 
+          onOpenChange={setIsMessageOpen} 
+        />
+        
+        <ChatPopup 
+          open={isChatOpen} 
+          onOpenChange={setIsChatOpen} 
+        />
       </div>
-      
-      {/* Mobile floating action buttons */}
-      {isMobile && (
-        <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
-          <Button 
-            size="icon" 
-            className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-            onClick={openMessagePopup}
-          >
-            <Mail className="h-4 w-4" />
-          </Button>
-          <Button 
-            size="icon" 
-            className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-            onClick={openChatPopup}
-          >
-            <MessageCircle className="h-4 w-4" />
-          </Button>
-        </div>
-      )}
-      
-      {/* Popups */}
-      <SubscribePopup 
-        open={isSubscribeOpen} 
-        onOpenChange={setIsSubscribeOpen} 
-      />
-      
-      <MessagePopup 
-        open={isMessageOpen} 
-        onOpenChange={setIsMessageOpen} 
-      />
-      
-      <ChatPopup 
-        open={isChatOpen} 
-        onOpenChange={setIsChatOpen} 
-      />
-    </div>
+    </ThemeProvider>
   );
 };
 
