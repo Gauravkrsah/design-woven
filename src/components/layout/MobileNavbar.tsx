@@ -38,14 +38,14 @@ const MobileNavbar: React.FC = () => {
   const [open, setOpen] = useState(false);
   
   const handleSubscribeClick = () => {
-    if (window.openSubscribePopup) {
+    if (typeof window !== 'undefined' && window.openSubscribePopup) {
       window.openSubscribePopup();
     }
     setOpen(false);
   };
   
   const handleMessageClick = () => {
-    if (window.openMessagePopup) {
+    if (typeof window !== 'undefined' && window.openMessagePopup) {
       window.openMessagePopup();
     }
     setOpen(false);

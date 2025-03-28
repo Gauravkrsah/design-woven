@@ -1,17 +1,16 @@
-
 import React from 'react';
-import { GitHub, Linkedin, Twitter, Users, Bell, MessageCircle } from 'lucide-react';
+import { Github, Linkedin, Twitter, Users, Bell, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const ProfileSection = () => {
   const handleSubscribeClick = () => {
-    if (window.openSubscribePopup) {
+    if (typeof window !== 'undefined' && window.openSubscribePopup) {
       window.openSubscribePopup();
     }
   };
   
   const handleMessageClick = () => {
-    if (window.openMessagePopup) {
+    if (typeof window !== 'undefined' && window.openMessagePopup) {
       window.openMessagePopup();
     }
   };
@@ -59,7 +58,7 @@ const SocialIcons = () => {
         rel="noopener noreferrer" 
         className="w-9 h-9 rounded-md bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
       >
-        <GitHub className="w-5 h-5" />
+        <Github className="w-5 h-5" />
       </a>
       <a 
         href="https://linkedin.com/" 

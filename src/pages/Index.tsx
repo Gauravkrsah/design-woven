@@ -11,6 +11,15 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Mail } from 'lucide-react';
 
+// Extend Window interface to include our custom properties
+declare global {
+  interface Window {
+    openSubscribePopup?: () => void;
+    openMessagePopup?: () => void;
+    openChatPopup?: () => void;
+  }
+}
+
 const Index: React.FC = () => {
   const [isSubscribeOpen, setIsSubscribeOpen] = useState(false);
   const [isMessageOpen, setIsMessageOpen] = useState(false);

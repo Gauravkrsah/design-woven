@@ -16,13 +16,7 @@ import Contacts from "./pages/Contacts";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
 
-// Declare global window types for TypeScript
-declare global {
-  interface Window {
-    openMessagePopup?: () => void;
-    openChatPopup?: () => void;
-  }
-}
+// No need for the global declaration here as it's already in Index.tsx
 
 const App = () => {
   // Create a new QueryClient instance inside the component

@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Sparkles, ExternalLink } from 'lucide-react';
+import { Sparkles, ExternalLink, MessageCircle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const ToolCard = ({ 
@@ -31,7 +32,7 @@ const RightSidebar: React.FC = () => {
   const isMobile = useIsMobile();
   
   const handleChatClick = () => {
-    if (window.openChatPopup) {
+    if (typeof window !== 'undefined' && window.openChatPopup) {
       window.openChatPopup();
     }
   };
