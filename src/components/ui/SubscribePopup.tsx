@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Mail } from 'lucide-react';
+import { Mail, Sparkles } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface SubscribePopupProps {
   open: boolean;
@@ -30,43 +32,50 @@ const SubscribePopup: React.FC<SubscribePopupProps> = ({ open, onOpenChange }) =
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-gray-900 border-gray-800">
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 shadow-xl">
         <DialogHeader>
-          <DialogTitle className="text-xl text-white">Subscribe to Newsletter</DialogTitle>
+          <DialogTitle className="text-xl text-white flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-yellow-400" />
+            Subscribe to Our Newsletter
+          </DialogTitle>
           <DialogDescription className="text-gray-400">
-            Stay updated with our latest projects and articles
+            Get exclusive updates on new projects and content
           </DialogDescription>
         </DialogHeader>
         
         <div className="flex items-center justify-center py-4">
-          <div className="w-16 h-16 rounded-full bg-blue-600/20 flex items-center justify-center">
-            <Mail className="h-8 w-8 text-blue-500" />
+          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600/20 to-purple-600/20 flex items-center justify-center">
+            <Mail className="h-8 w-8 text-blue-400" />
           </div>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+          <div className="space-y-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300">
               Email Address
             </label>
-            <input
+            <Input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="your@email.com"
-              className="w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800/50 text-white focus:ring-2 focus:ring-blue-500 placeholder:text-gray-500"
             />
           </div>
           
-          <button
+          <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full py-6 text-base bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-medium rounded-lg transition-all disabled:opacity-70"
           >
             {isSubmitting ? "Subscribing..." : "Subscribe"}
-          </button>
+          </Button>
+          
+          <p className="text-center text-xs text-gray-500 mt-3">
+            We respect your privacy. You can unsubscribe at any time.
+          </p>
         </form>
       </DialogContent>
     </Dialog>

@@ -2,7 +2,10 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Send } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 
 interface MessagePopupProps {
   open: boolean;
@@ -45,26 +48,23 @@ const MessagePopup: React.FC<MessagePopupProps> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-gray-900 border-gray-800">
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 shadow-xl">
         <DialogHeader>
-          <DialogTitle className="text-xl text-white">Send a Message</DialogTitle>
+          <DialogTitle className="text-xl text-white flex items-center gap-2">
+            <MessageCircle className="h-5 w-5 text-blue-400" />
+            Send a Message
+          </DialogTitle>
           <DialogDescription className="text-gray-400">
             Have a question or want to work together?
           </DialogDescription>
         </DialogHeader>
         
-        <div className="flex items-center justify-center py-4">
-          <div className="w-16 h-16 rounded-full bg-blue-600/20 flex items-center justify-center">
-            <MessageCircle className="h-8 w-8 text-blue-500" />
-          </div>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+        <form onSubmit={handleSubmit} className="space-y-4 mt-2">
+          <div className="space-y-2">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-300">
               Name
             </label>
-            <input
+            <Input
               type="text"
               id="name"
               name="name"
@@ -72,15 +72,15 @@ const MessagePopup: React.FC<MessagePopupProps> = ({ open, onOpenChange }) => {
               onChange={handleChange}
               required
               placeholder="Your name"
-              className="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-700 bg-gray-800/50 text-white focus:ring-2 focus:ring-blue-500 placeholder:text-gray-500"
             />
           </div>
           
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+          <div className="space-y-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300">
               Email
             </label>
-            <input
+            <Input
               type="email"
               id="email"
               name="email"
@@ -88,30 +88,30 @@ const MessagePopup: React.FC<MessagePopupProps> = ({ open, onOpenChange }) => {
               onChange={handleChange}
               required
               placeholder="your@email.com"
-              className="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-700 bg-gray-800/50 text-white focus:ring-2 focus:ring-blue-500 placeholder:text-gray-500"
             />
           </div>
           
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-1">
+          <div className="space-y-2">
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-300">
               Phone (optional)
             </label>
-            <input
+            <Input
               type="tel"
               id="phone"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
               placeholder="Your phone number"
-              className="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-700 bg-gray-800/50 text-white focus:ring-2 focus:ring-blue-500 placeholder:text-gray-500"
             />
           </div>
           
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1">
+          <div className="space-y-2">
+            <label htmlFor="message" className="block text-sm font-medium text-gray-300">
               Message
             </label>
-            <textarea
+            <Textarea
               id="message"
               name="message"
               value={formData.message}
@@ -119,17 +119,22 @@ const MessagePopup: React.FC<MessagePopupProps> = ({ open, onOpenChange }) => {
               required
               rows={4}
               placeholder="Your message"
-              className="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none"
+              className="w-full rounded-lg border border-gray-700 bg-gray-800/50 text-white focus:ring-2 focus:ring-blue-500 placeholder:text-gray-500 resize-none"
             />
           </div>
           
-          <button
+          <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full py-6 text-base bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-medium rounded-lg transition-all disabled:opacity-70 flex items-center justify-center gap-2"
           >
-            {isSubmitting ? "Sending..." : "Send Message"}
-          </button>
+            {isSubmitting ? "Sending..." : (
+              <>
+                <Send className="h-4 w-4" />
+                <span>Send Message</span>
+              </>
+            )}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

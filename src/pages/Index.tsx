@@ -7,6 +7,8 @@ import SubscribePopup from '@/components/ui/SubscribePopup';
 import MessagePopup from '@/components/ui/MessagePopup';
 import ChatPopup from '@/components/ui/ChatPopup';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
+import { MessageCircle, Mail } from 'lucide-react';
 
 const Index: React.FC = () => {
   const [isSubscribeOpen, setIsSubscribeOpen] = useState(false);
@@ -51,12 +53,37 @@ const Index: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-black text-white">
-      <div className="sticky top-0 h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-black text-white">
+      {/* Mobile floating action buttons */}
+      {isMobile && (
+        <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2">
+          <Button 
+            size="icon" 
+            className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+            onClick={openMessagePopup}
+          >
+            <Mail className="h-5 w-5" />
+          </Button>
+          <Button 
+            size="icon" 
+            className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+            onClick={openChatPopup}
+          >
+            <MessageCircle className="h-5 w-5" />
+          </Button>
+        </div>
+      )}
+      
+      {/* Left sidebar - hidden on mobile */}
+      <div className="hidden lg:block sticky top-0 h-screen">
         <LeftSidebar />
       </div>
+      
+      {/* Main content - always visible */}
       <MainContent />
-      <div className="sticky top-0 h-screen">
+      
+      {/* Right sidebar - hidden on mobile */}
+      <div className="hidden lg:block sticky top-0 h-screen">
         <RightSidebar />
       </div>
       
