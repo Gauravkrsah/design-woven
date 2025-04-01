@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
@@ -17,7 +16,8 @@ import {
   Trash2,
   BarChart4,
   AlertCircle,
-  Loader2
+  Loader2,
+  Menu
 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -157,12 +157,10 @@ const Dashboard: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  // Set the query client for API service
   useEffect(() => {
     apiService.setQueryClientForAPI(queryClient);
   }, [queryClient]);
   
-  // Fetch dashboard stats
   const { 
     data: dashboardStats, 
     isLoading: isLoadingStats 
@@ -171,7 +169,6 @@ const Dashboard: React.FC = () => {
     queryFn: apiService.getDashboardStats
   });
   
-  // Fetch projects
   const { 
     data: projects, 
     isLoading: isLoadingProjects 
@@ -180,7 +177,6 @@ const Dashboard: React.FC = () => {
     queryFn: apiService.getProjects
   });
   
-  // Fetch blog posts
   const { 
     data: blogPosts, 
     isLoading: isLoadingBlogPosts 
@@ -189,7 +185,6 @@ const Dashboard: React.FC = () => {
     queryFn: apiService.getBlogPosts
   });
   
-  // Fetch messages
   const { 
     data: messages, 
     isLoading: isLoadingMessages 
@@ -198,7 +193,6 @@ const Dashboard: React.FC = () => {
     queryFn: apiService.getMessages
   });
   
-  // Delete project mutation
   const deleteProjectMutation = useMutation({
     mutationFn: (id: string) => apiService.deleteProject(id),
     onSuccess: () => {
@@ -218,7 +212,6 @@ const Dashboard: React.FC = () => {
     }
   });
   
-  // Delete blog post mutation
   const deleteBlogPostMutation = useMutation({
     mutationFn: (id: string) => apiService.deleteBlogPost(id),
     onSuccess: () => {
@@ -238,7 +231,6 @@ const Dashboard: React.FC = () => {
     }
   });
   
-  // Delete message mutation
   const deleteMessageMutation = useMutation({
     mutationFn: (id: string) => apiService.deleteMessage(id),
     onSuccess: () => {
@@ -258,7 +250,6 @@ const Dashboard: React.FC = () => {
     }
   });
   
-  // Mark message as read mutation
   const markAsReadMutation = useMutation({
     mutationFn: (id: string) => apiService.markMessageAsRead(id),
     onSuccess: () => {
@@ -315,7 +306,6 @@ const Dashboard: React.FC = () => {
         });
       }
     } else {
-      // Redirect to the appropriate page for other types
       const path = type === 'project' ? `/projects/${id}` : type === 'blog post' ? `/blogs/${id}` : '';
       if (path) window.open(path, '_blank');
     }
