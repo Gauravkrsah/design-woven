@@ -110,8 +110,8 @@ const MainContent: React.FC = () => {
           
           <div className="space-y-16 max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <ExperienceSection />
               <SkillsSection />
+              <ExperienceSection />
             </div>
             
             <Projects />
