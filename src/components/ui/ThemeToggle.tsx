@@ -14,14 +14,14 @@ export const ThemeToggle = () => {
       size="icon"
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+      className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
     >
       <span className="sr-only">Toggle theme</span>
       <motion.div
         initial={{ scale: 0.5, opacity: 0, rotate: -30 }}
         animate={{ scale: 1, opacity: 1, rotate: 0 }}
         exit={{ scale: 0.5, opacity: 0, rotate: 30 }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.3 }}
         key={theme}
       >
         {theme === 'dark' ? (

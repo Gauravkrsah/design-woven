@@ -11,9 +11,11 @@ import SchedulePopup from '@/components/ui/SchedulePopup';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Mail, Calendar } from 'lucide-react';
-import { ThemeProvider } from '@/hooks/use-theme';
+import { QueryClient } from '@tanstack/react-query';
+import { setQueryClientForAPI } from '@/lib/services/apiService';
 
-// Extend Window interface to include our custom properties
+// Global popup states are managed through window object
+// Each page can trigger these popups
 declare global {
   interface Window {
     openSubscribePopup?: () => void;
@@ -32,6 +34,10 @@ const Index: React.FC = () => {
 
   useEffect(() => {
     document.title = "Gaurav Kr Sah | Portfolio";
+    
+    // Initialize query client for API service
+    const queryClient = new QueryClient();
+    setQueryClientForAPI(queryClient);
     
     // Show subscribe popup after 5 seconds for new visitors
     const hasVisited = localStorage.getItem('hasVisited');
@@ -81,75 +87,73 @@ const Index: React.FC = () => {
   }, []);
 
   return (
-    <ThemeProvider defaultTheme="dark">
-      <div className="flex flex-col min-h-screen bg-background text-foreground">
-        {/* Mobile navbar - only visible on mobile */}
-        <MobileNavbar />
-        
-        <div className="flex flex-1 pt-[60px] lg:pt-0">
-          {/* Left sidebar - hidden on mobile */}
-          <div className="hidden lg:block sticky top-0 h-screen">
-            <LeftSidebar />
-          </div>
-          
-          {/* Main content - always visible */}
-          <MainContent />
-          
-          {/* Right sidebar - hidden on mobile */}
-          <div className="hidden lg:block sticky top-0 h-screen">
-            <RightSidebar />
-          </div>
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      {/* Mobile navbar - only visible on mobile */}
+      <MobileNavbar />
+      
+      <div className="flex flex-1 pt-[60px] lg:pt-0">
+        {/* Left sidebar - hidden on mobile */}
+        <div className="hidden lg:block sticky top-0 h-screen">
+          <LeftSidebar />
         </div>
         
-        {/* Mobile floating action buttons */}
-        {isMobile && (
-          <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2">
-            <Button 
-              size="icon" 
-              className="h-7 w-7 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-              onClick={openMessagePopup}
-            >
-              <Mail className="h-3 w-3" />
-            </Button>
-            <Button 
-              size="icon" 
-              className="h-7 w-7 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-              onClick={openChatPopup}
-            >
-              <MessageCircle className="h-3 w-3" />
-            </Button>
-            <Button 
-              size="icon" 
-              className="h-7 w-7 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-              onClick={openSchedulePopup}
-            >
-              <Calendar className="h-3 w-3" />
-            </Button>
-          </div>
-        )}
+        {/* Main content - always visible */}
+        <MainContent />
         
-        {/* Popups */}
-        <SubscribePopup 
-          open={isSubscribeOpen} 
-          onOpenChange={setIsSubscribeOpen} 
-        />
-        
-        <MessagePopup 
-          open={isMessageOpen} 
-          onOpenChange={setIsMessageOpen} 
-        />
-        
-        <ChatPopup 
-          open={isChatOpen} 
-          onOpenChange={setIsChatOpen} 
-        />
-
-        <SchedulePopup
-          open={isScheduleOpen}
-          onOpenChange={setIsScheduleOpen}
-        />
+        {/* Right sidebar - hidden on mobile */}
+        <div className="hidden lg:block sticky top-0 h-screen">
+          <RightSidebar />
+        </div>
       </div>
-    </ThemeProvider>
+      
+      {/* Mobile floating action buttons */}
+      {isMobile && (
+        <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2">
+          <Button 
+            size="icon" 
+            className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+            onClick={openMessagePopup}
+          >
+            <Mail className="h-4 w-4" />
+          </Button>
+          <Button 
+            size="icon" 
+            className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+            onClick={openChatPopup}
+          >
+            <MessageCircle className="h-4 w-4" />
+          </Button>
+          <Button 
+            size="icon" 
+            className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+            onClick={openSchedulePopup}
+          >
+            <Calendar className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+      
+      {/* Popups */}
+      <SubscribePopup 
+        open={isSubscribeOpen} 
+        onOpenChange={setIsSubscribeOpen} 
+      />
+      
+      <MessagePopup 
+        open={isMessageOpen} 
+        onOpenChange={setIsMessageOpen} 
+      />
+      
+      <ChatPopup 
+        open={isChatOpen} 
+        onOpenChange={setIsChatOpen} 
+      />
+
+      <SchedulePopup
+        open={isScheduleOpen}
+        onOpenChange={setIsScheduleOpen}
+      />
+    </div>
   );
 };
 

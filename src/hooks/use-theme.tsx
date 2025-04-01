@@ -27,9 +27,10 @@ export function ThemeProvider({
   storageKey = 'theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  );
+  const [theme, setTheme] = useState<Theme>(() => {
+    const savedTheme = localStorage.getItem(storageKey) as Theme;
+    return savedTheme || defaultTheme;
+  });
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -43,10 +44,9 @@ export function ThemeProvider({
         : 'light';
       
       root.classList.add(systemTheme);
-      return;
+    } else {
+      root.classList.add(theme);
     }
-    
-    root.classList.add(theme);
   }, [theme]);
 
   const value = {
