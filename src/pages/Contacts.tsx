@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import LeftSidebar from '@/components/layout/LeftSidebar';
 import RightSidebar from '@/components/layout/RightSidebar';
@@ -20,7 +19,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { gsap } from 'gsap';
+import gsap from 'gsap';
 
 const Contacts: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +37,6 @@ const Contacts: React.FC = () => {
   useEffect(() => {
     document.title = "Contact Me | Gaurav Kr Sah";
     
-    // Animate contact info items
     if (contactInfoRef.current) {
       const items = contactInfoRef.current.querySelectorAll('.contact-item');
       gsap.from(items, {
@@ -51,7 +49,6 @@ const Contacts: React.FC = () => {
       });
     }
     
-    // Animate form elements
     if (formRef.current) {
       const formElements = formRef.current.querySelectorAll('input, textarea, button');
       gsap.from(formElements, {
@@ -64,19 +61,16 @@ const Contacts: React.FC = () => {
       });
     }
     
-    // Floating particles animation
     const container = document.querySelector('.particles-container');
     if (container) {
       for (let i = 0; i < 40; i++) {
         const particle = document.createElement('div');
         particle.className = `absolute rounded-full ${theme === 'dark' ? 'bg-white/5' : 'bg-black/5'}`;
         
-        // Random size between 3px and 8px
         const size = Math.random() * 5 + 3;
         particle.style.width = `${size}px`;
         particle.style.height = `${size}px`;
         
-        // Random position
         particle.style.top = `${Math.random() * 100}%`;
         particle.style.left = `${Math.random() * 100}%`;
         
@@ -104,7 +98,6 @@ const Contacts: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
     setTimeout(() => {
       toast.success('Message sent!', {
         description: 'I will get back to you as soon as possible.',
@@ -112,7 +105,6 @@ const Contacts: React.FC = () => {
       setIsSubmitting(false);
       setSubmitted(true);
       
-      // Reset form after showing success message
       setTimeout(() => {
         setFormData({ name: '', email: '', subject: '', message: '' });
         setSubmitted(false);
@@ -128,7 +120,6 @@ const Contacts: React.FC = () => {
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-screen">
           <div className="relative">
-            {/* Particles background */}
             <div className="particles-container absolute inset-0 overflow-hidden -z-10"></div>
             
             <div className="max-w-6xl mx-auto p-6 md:p-8 lg:p-10">

@@ -1,10 +1,9 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Play, ArrowRight, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { gsap } from 'gsap';
+import gsap from 'gsap';
 
 interface Video {
   id: string;
@@ -49,29 +48,24 @@ const VideosHero: React.FC = () => {
   
   useEffect(() => {
     if (sectionRef.current) {
-      gsap.from('.video-title', {
+      const videoTitles = sectionRef.current.querySelectorAll('.video-title');
+      const videoCards = sectionRef.current.querySelectorAll('.video-card');
+      
+      gsap.from(videoTitles, {
         opacity: 0,
         y: 20,
         duration: 0.8,
         stagger: 0.2,
         ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-        },
       });
       
-      gsap.from('.video-card', {
+      gsap.from(videoCards, {
         opacity: 0,
         y: 30,
         duration: 0.8,
         stagger: 0.2,
         ease: 'power3.out',
         delay: 0.3,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
-        },
       });
     }
   }, []);

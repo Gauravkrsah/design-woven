@@ -1,10 +1,9 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { ArrowRight, Calendar, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/hooks/use-theme';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { gsap } from 'gsap';
+import gsap from 'gsap';
 
 const HeroSection: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -32,11 +31,25 @@ const HeroSection: React.FC = () => {
         const titleText = title.textContent || '';
         const subtitleText = subtitle.textContent || '';
         
-        title.innerHTML = '';
-        splitText(titleText).forEach(span => title.appendChild(span));
+        if (title instanceof HTMLElement) {
+          title.innerHTML = '';
+          splitText(titleText).forEach(span => {
+            const spanNode = document.createElement('span');
+            spanNode.className = 'inline-block opacity-0';
+            spanNode.textContent = span.props.children;
+            title.appendChild(spanNode);
+          });
+        }
         
-        subtitle.innerHTML = '';
-        splitText(subtitleText).forEach(span => subtitle.appendChild(span));
+        if (subtitle instanceof HTMLElement) {
+          subtitle.innerHTML = '';
+          splitText(subtitleText).forEach(span => {
+            const spanNode = document.createElement('span');
+            spanNode.className = 'inline-block opacity-0';
+            spanNode.textContent = span.props.children;
+            subtitle.appendChild(spanNode);
+          });
+        }
         
         const titleChars = title.querySelectorAll('span');
         const subtitleChars = subtitle.querySelectorAll('span');

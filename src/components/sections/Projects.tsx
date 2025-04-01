@@ -1,10 +1,9 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import ProjectCard from '@/components/ui/ProjectCard';
 import { cn } from '@/lib/utils';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { gsap } from 'gsap';
+import gsap from 'gsap';
 import { Link } from 'react-router-dom';
 
 const projects = [
@@ -60,27 +59,29 @@ const Projects: React.FC = () => {
             const subtitle = sectionRef.current?.querySelector('.section-subtitle');
             const viewAll = sectionRef.current?.querySelector('.view-all');
             
-            gsap.from(title, {
-              y: 20,
-              opacity: 0,
-              duration: 0.6,
-              ease: 'power3.out',
-            });
-            
-            gsap.from(subtitle, {
-              y: 20,
-              opacity: 0,
-              duration: 0.6,
-              delay: 0.2,
-              ease: 'power3.out',
-            });
-            
-            gsap.from(viewAll, {
-              opacity: 0,
-              duration: 0.6,
-              delay: 0.4,
-              ease: 'power3.out',
-            });
+            if (title && subtitle && viewAll) {
+              gsap.from(title, {
+                y: 20,
+                opacity: 0,
+                duration: 0.6,
+                ease: 'power3.out',
+              });
+              
+              gsap.from(subtitle, {
+                y: 20,
+                opacity: 0,
+                duration: 0.6,
+                delay: 0.2,
+                ease: 'power3.out',
+              });
+              
+              gsap.from(viewAll, {
+                opacity: 0,
+                duration: 0.6,
+                delay: 0.4,
+                ease: 'power3.out',
+              });
+            }
           }
         },
         { threshold: 0.1 }

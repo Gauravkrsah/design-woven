@@ -17,6 +17,14 @@ import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import { useState } from "react";
 
+// Declare window object type to include our custom methods
+declare global {
+  interface Window {
+    openSchedulePopup?: () => void;
+    openMessagePopup?: () => void;
+  }
+}
+
 const App = () => {
   // Create a new QueryClient instance inside the component
   const [queryClient] = useState(() => new QueryClient());
