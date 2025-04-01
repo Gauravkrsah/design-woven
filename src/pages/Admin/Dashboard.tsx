@@ -18,7 +18,8 @@ import {
   BarChart4,
   AlertCircle,
   Loader2,
-  Menu
+  Menu,
+  Briefcase
 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
