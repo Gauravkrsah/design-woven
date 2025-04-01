@@ -7,9 +7,10 @@ import MobileNavbar from '@/components/layout/MobileNavbar';
 import SubscribePopup from '@/components/ui/SubscribePopup';
 import MessagePopup from '@/components/ui/MessagePopup';
 import ChatPopup from '@/components/ui/ChatPopup';
+import SchedulePopup from '@/components/ui/SchedulePopup';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Mail } from 'lucide-react';
+import { MessageCircle, Mail, Calendar } from 'lucide-react';
 import { ThemeProvider } from '@/hooks/use-theme';
 
 // Extend Window interface to include our custom properties
@@ -18,6 +19,7 @@ declare global {
     openSubscribePopup?: () => void;
     openMessagePopup?: () => void;
     openChatPopup?: () => void;
+    openSchedulePopup?: () => void;
   }
 }
 
@@ -25,6 +27,7 @@ const Index: React.FC = () => {
   const [isSubscribeOpen, setIsSubscribeOpen] = useState(false);
   const [isMessageOpen, setIsMessageOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -57,16 +60,23 @@ const Index: React.FC = () => {
     setIsChatOpen(true);
   };
 
+  // Function to handle schedule button click from anywhere in the app
+  const openSchedulePopup = () => {
+    setIsScheduleOpen(true);
+  };
+
   // Make these functions available globally
   React.useEffect(() => {
     window.openSubscribePopup = openSubscribePopup;
     window.openMessagePopup = openMessagePopup;
     window.openChatPopup = openChatPopup;
+    window.openSchedulePopup = openSchedulePopup;
     
     return () => {
       delete window.openSubscribePopup;
       delete window.openMessagePopup;
       delete window.openChatPopup;
+      delete window.openSchedulePopup;
     };
   }, []);
 
@@ -96,17 +106,24 @@ const Index: React.FC = () => {
           <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2">
             <Button 
               size="icon" 
-              className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+              className="h-7 w-7 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
               onClick={openMessagePopup}
             >
-              <Mail className="h-3.5 w-3.5" />
+              <Mail className="h-3 w-3" />
             </Button>
             <Button 
               size="icon" 
-              className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+              className="h-7 w-7 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
               onClick={openChatPopup}
             >
-              <MessageCircle className="h-3.5 w-3.5" />
+              <MessageCircle className="h-3 w-3" />
+            </Button>
+            <Button 
+              size="icon" 
+              className="h-7 w-7 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+              onClick={openSchedulePopup}
+            >
+              <Calendar className="h-3 w-3" />
             </Button>
           </div>
         )}
@@ -125,6 +142,11 @@ const Index: React.FC = () => {
         <ChatPopup 
           open={isChatOpen} 
           onOpenChange={setIsChatOpen} 
+        />
+
+        <SchedulePopup
+          open={isScheduleOpen}
+          onOpenChange={setIsScheduleOpen}
         />
       </div>
     </ThemeProvider>

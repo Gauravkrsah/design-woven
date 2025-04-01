@@ -6,8 +6,12 @@ import ExperienceSection from '../sections/ExperienceSection';
 import SkillsSection from '../sections/SkillsSection';
 import Projects from '../sections/Projects';
 import RecentWorks from '../sections/RecentWorks';
+import RecentBlogs from '../sections/RecentBlogs';
+import RecentContents from '../sections/RecentContents';
+import VideosHero from '../sections/VideosHero';
 import ContentCard from '../ui/ContentCard';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/hooks/use-theme';
 
 const featuredContent = [
   {
@@ -66,15 +70,42 @@ const featuredContent = [
 
 const MainContent: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     setIsVisible(true);
-  }, []);
+    
+    // Add floating particles animation
+    const container = document.querySelector('.main-background');
+    if (container) {
+      // Clear existing particles when theme changes
+      container.innerHTML = '';
+      
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = `absolute rounded-full ${theme === 'dark' ? 'bg-white/5' : 'bg-black/5'}`;
+        
+        // Random size between 2px and 6px
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random position
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.left = `${Math.random() * 100}%`;
+        
+        container.appendChild(particle);
+      }
+    }
+  }, [theme]);
 
   return (
-    <main className="flex-1 bg-black overflow-hidden">
+    <main className="flex-1 bg-gray-50 dark:bg-black overflow-hidden relative">
+      {/* Animated background */}
+      <div className="main-background absolute inset-0 overflow-hidden pointer-events-none -z-10"></div>
+      
       <ScrollArea className="h-screen">
-        <div className="p-6 lg:p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           <HeroSection />
           
           <div className="space-y-16 max-w-6xl mx-auto">
@@ -84,20 +115,22 @@ const MainContent: React.FC = () => {
             </div>
             
             <Projects />
+            <VideosHero />
             <RecentWorks />
+            <RecentBlogs />
             
             <section className="mt-16">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-2">Featured Content</h2>
-                  <p className="text-gray-400">Videos, tutorials and courses to help you learn</p>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Featured Content</h2>
+                  <p className="text-gray-600 dark:text-gray-400">Videos, tutorials and courses to help you learn</p>
                 </div>
-                <a href="/contents" className="text-blue-400 hover:text-blue-300 transition-colors text-sm">
+                <a href="/contents" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors text-sm">
                   View All
                 </a>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {featuredContent.map((content, index) => (
                   <div 
                     key={content.id}
@@ -114,8 +147,8 @@ const MainContent: React.FC = () => {
             </section>
           </div>
           
-          <div className="mt-16 py-8 border-t border-gray-800 text-center">
-            <p className="text-gray-500 text-sm">© {new Date().getFullYear()} Gaurav Kr Sah. All rights reserved.</p>
+          <div className="mt-16 py-8 border-t border-gray-200 dark:border-gray-800 text-center">
+            <p className="text-gray-500 dark:text-gray-400 text-sm">© {new Date().getFullYear()} Gaurav Kr Sah. All rights reserved.</p>
           </div>
         </div>
       </ScrollArea>

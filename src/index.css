@@ -69,7 +69,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border selection:bg-primary/20 selection:text-primary;
   }
   body {
     @apply bg-background text-foreground antialiased;
@@ -82,7 +82,7 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-xl;
+    @apply bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/10 shadow-xl;
   }
 
   .text-gradient {
@@ -108,6 +108,21 @@
   .section-fade-in > *:nth-child(8) { animation-delay: 0.8s; }
   .section-fade-in > *:nth-child(9) { animation-delay: 0.9s; }
   .section-fade-in > *:nth-child(10) { animation-delay: 1s; }
+  
+  /* Card styles */
+  .content-card {
+    @apply bg-white/5 dark:bg-gray-900/60 rounded-xl border border-gray-200/30 dark:border-gray-800/60 
+    hover:border-gray-300 dark:hover:border-gray-700 transition-all 
+    hover:shadow-lg hover:-translate-y-1 overflow-hidden;
+  }
+  
+  .responsive-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+  }
+  
+  .responsive-grid-lg {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
 }
 
 @layer utilities {
@@ -117,5 +132,41 @@
   
   .text-balance {
     text-wrap: balance;
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse-subtle 3s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+}
+
+/* GSAP will handle most animations, but these are useful as fallbacks */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .responsive-card {
+    @apply max-w-full;
   }
 }

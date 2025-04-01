@@ -14,9 +14,8 @@ import BlogDetail from "./pages/BlogDetail";
 import Contents from "./pages/Contents";
 import Contacts from "./pages/Contacts";
 import NotFound from "./pages/NotFound";
+import AdminDashboard from "./pages/Admin/Dashboard";
 import { useState } from "react";
-
-// No need for the global declaration here as it's already in Index.tsx
 
 const App = () => {
   // Create a new QueryClient instance inside the component
@@ -38,6 +37,7 @@ const App = () => {
             <Route path="/blogs/:id" element={<BlogDetail />} />
             <Route path="/contents" element={<Contents />} />
             <Route path="/contacts" element={<Contacts />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -4,6 +4,7 @@ import { Sparkles, ExternalLink, MessageCircle, Menu, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 const ToolCard = ({ 
   title, 
@@ -19,7 +20,7 @@ const ToolCard = ({
       href={link}
       target="_blank"
       rel="noopener noreferrer"
-      className="block p-2.5 rounded-lg bg-gray-900 hover:bg-gray-800 transition-colors mb-2 group"
+      className="block p-2 rounded-lg bg-gray-900/80 dark:bg-gray-900 hover:bg-gray-800 transition-colors mb-2 group"
     >
       <div className="flex justify-between items-start">
         <h3 className="text-white text-xs font-medium mb-1">{title}</h3>
@@ -85,17 +86,17 @@ const RightSidebar: React.FC = () => {
   // For desktop, show the sidebar normally
   if (!isMobile) {
     return (
-      <aside className="w-56 h-screen bg-black border-l border-gray-800 p-4 overflow-auto">
+      <aside className="w-56 h-screen bg-black/90 dark:bg-black border-l border-gray-800 p-4 overflow-auto">
         {sidebarContent}
         
-        <div className="fixed bottom-4 right-4 z-10">
+        <div className="fixed bottom-16 right-4 z-10">
           <Button 
             onClick={handleChatClick} 
-            size="icon"
-            className="h-9 w-9 rounded-full bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg"
+            size="sm"
+            className="h-8 w-8 rounded-full bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg"
             aria-label="Open chat"
           >
-            <MessageCircle className="w-4 h-4" />
+            <MessageCircle className="w-3.5 h-3.5" />
           </Button>
         </div>
       </aside>
@@ -117,7 +118,7 @@ const RightSidebar: React.FC = () => {
               <span className="sr-only">Open tools menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-64 bg-black border-l border-gray-800 p-4">
+          <SheetContent side="right" className="w-64 bg-black/90 dark:bg-black border-l border-gray-800 p-4">
             {sidebarContent}
           </SheetContent>
         </Sheet>
