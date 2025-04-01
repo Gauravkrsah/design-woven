@@ -102,22 +102,22 @@ const OtherWorks: React.FC = () => {
       </div>
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-screen">
-          <div className="p-8 max-w-6xl mx-auto">
+          <div className="p-4 sm:p-6 max-w-6xl mx-auto">
             <div className={cn(
               "transition-all duration-700",
               isVisible ? "opacity-100" : "opacity-0 translate-y-4"
             )}>
-              <h1 className="text-3xl font-bold mb-2">Other Works</h1>
-              <p className="text-gray-400 mb-8">A collection of my consulting, speaking, research, and contributions</p>
+              <h1 className="text-2xl font-bold mb-1">Other Works</h1>
+              <p className="text-gray-400 text-sm mb-6">A collection of my consulting, speaking, research, and contributions</p>
               
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="flex flex-wrap gap-1.5">
                   {categories.map(category => (
                     <button
                       key={category}
                       onClick={() => setActiveCategory(category)}
                       className={cn(
-                        "px-4 py-2 rounded-full text-sm transition-colors",
+                        "px-3 py-1.5 rounded-full text-xs transition-colors",
                         activeCategory === category 
                           ? "bg-blue-600 text-white" 
                           : "bg-gray-800 text-gray-300 hover:bg-gray-700"
@@ -128,20 +128,20 @@ const OtherWorks: React.FC = () => {
                   ))}
                 </div>
                 
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <div className="relative w-full sm:w-auto">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3.5 w-3.5" />
                   <input
                     type="text"
                     placeholder="Search works..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className="pl-9 pr-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white w-full sm:w-56 text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   />
                 </div>
               </div>
               
               {filteredWorks.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {filteredWorks.map((work, index) => (
                     <div 
                       key={work.id}
@@ -152,30 +152,30 @@ const OtherWorks: React.FC = () => {
                       style={{ transitionDelay: `${index * 100 + 200}ms` }}
                     >
                       <div className="glass-card rounded-lg overflow-hidden h-full flex flex-col group">
-                        <div className="relative h-48 overflow-hidden">
+                        <div className="relative h-32 overflow-hidden">
                           <img 
                             src={work.imageUrl} 
                             alt={work.title}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
-                          <div className="absolute top-4 left-4">
-                            <span className="px-3 py-1 bg-blue-600/80 backdrop-blur-sm text-white text-xs rounded-full">
+                          <div className="absolute top-2 left-2">
+                            <span className="px-2 py-0.5 bg-blue-600/80 backdrop-blur-sm text-white text-[10px] rounded-full">
                               {work.category}
                             </span>
                           </div>
                         </div>
-                        <div className="p-6 flex flex-col flex-grow">
-                          <div className="flex items-center text-gray-400 text-sm mb-2">
-                            <Calendar className="h-4 w-4 mr-2" />
+                        <div className="p-3 flex flex-col flex-grow">
+                          <div className="flex items-center text-gray-400 text-[10px] mb-1">
+                            <Calendar className="h-3 w-3 mr-1" />
                             {work.date}
                           </div>
-                          <h3 className="text-lg font-bold mb-2 transition-colors group-hover:text-blue-400">{work.title}</h3>
-                          <p className="text-gray-400 text-sm mb-4 flex-grow">{work.description}</p>
+                          <h3 className="text-sm font-bold mb-1 transition-colors group-hover:text-blue-400 line-clamp-1">{work.title}</h3>
+                          <p className="text-gray-400 text-xs mb-2 flex-grow line-clamp-2">{work.description}</p>
                           <Link 
                             to={`/other-works/${work.id}`}
-                            className="inline-flex items-center text-blue-500 hover:text-blue-400 transition-colors"
+                            className="inline-flex items-center text-xs text-blue-500 hover:text-blue-400 transition-colors"
                           >
-                            View Details <ArrowRight className="ml-2 h-4 w-4" />
+                            View Details <ArrowRight className="ml-1 h-3 w-3" />
                           </Link>
                         </div>
                       </div>
@@ -183,9 +183,9 @@ const OtherWorks: React.FC = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <h3 className="text-xl font-medium mb-2">No results found</h3>
-                  <p className="text-gray-400">
+                <div className="text-center py-8">
+                  <h3 className="text-lg font-medium mb-2">No results found</h3>
+                  <p className="text-gray-400 text-sm">
                     No works match your current filters. Try adjusting your search or category selection.
                   </p>
                 </div>

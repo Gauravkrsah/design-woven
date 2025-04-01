@@ -93,20 +93,20 @@ const Index: React.FC = () => {
         
         {/* Mobile floating action buttons */}
         {isMobile && (
-          <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+          <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2">
             <Button 
               size="icon" 
-              className="h-9 w-9 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+              className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
               onClick={openMessagePopup}
             >
-              <Mail className="h-4 w-4" />
+              <Mail className="h-3.5 w-3.5" />
             </Button>
             <Button 
               size="icon" 
-              className="h-9 w-9 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+              className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
               onClick={openChatPopup}
             >
-              <MessageCircle className="h-4 w-4" />
+              <MessageCircle className="h-3.5 w-3.5" />
             </Button>
           </div>
         )}

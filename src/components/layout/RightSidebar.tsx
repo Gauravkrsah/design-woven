@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { Sparkles, ExternalLink, MessageCircle } from 'lucide-react';
+import { Sparkles, ExternalLink, MessageCircle, Menu, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const ToolCard = ({ 
   title, 
@@ -31,6 +32,7 @@ const ToolCard = ({
 
 const RightSidebar: React.FC = () => {
   const isMobile = useIsMobile();
+  const [open, setOpen] = React.useState(false);
   
   const handleChatClick = () => {
     if (typeof window !== 'undefined' && window.openChatPopup) {
@@ -38,13 +40,18 @@ const RightSidebar: React.FC = () => {
     }
   };
 
-  return (
-    <aside className="w-56 h-screen bg-black border-l border-gray-800 p-4 overflow-auto">
+  const sidebarContent = (
+    <>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center text-amber-400 gap-1.5">
           <Sparkles className="w-3 h-3" />
           <span className="text-xs font-medium">Tools I Made</span>
         </div>
+        {isMobile && (
+          <button onClick={() => setOpen(false)} className="p-1 rounded-md text-gray-400 hover:bg-gray-800">
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -72,8 +79,15 @@ const RightSidebar: React.FC = () => {
           link="https://snippets.example.com"
         />
       </div>
+    </>
+  );
 
-      {!isMobile && (
+  // For desktop, show the sidebar normally
+  if (!isMobile) {
+    return (
+      <aside className="w-56 h-screen bg-black border-l border-gray-800 p-4 overflow-auto">
+        {sidebarContent}
+        
         <div className="fixed bottom-4 right-4 z-10">
           <Button 
             onClick={handleChatClick} 
@@ -84,8 +98,31 @@ const RightSidebar: React.FC = () => {
             <MessageCircle className="w-4 h-4" />
           </Button>
         </div>
-      )}
-    </aside>
+      </aside>
+    );
+  }
+
+  // For mobile, use a trigger button and sheet (drawer)
+  return (
+    <>
+      <div className="fixed top-[60px] right-3 z-40">
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 rounded-full bg-gray-800 text-white"
+            >
+              <Menu className="h-4 w-4" />
+              <span className="sr-only">Open tools menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-64 bg-black border-l border-gray-800 p-4">
+            {sidebarContent}
+          </SheetContent>
+        </Sheet>
+      </div>
+    </>
   );
 };
 
