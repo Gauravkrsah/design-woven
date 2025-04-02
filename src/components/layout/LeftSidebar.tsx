@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Github, Linkedin, Twitter, Home, FolderKanban, Briefcase, BookOpen, Layers, Mail, User } from 'lucide-react';
+import { Github, Linkedin, Twitter, Home, FolderKanban, Briefcase, BookOpen, Layers, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/lib/utils';
@@ -118,18 +118,6 @@ const LeftSidebar: React.FC = () => {
               label="Contact" 
               href="/contacts" 
               active={location.pathname === '/contacts'} 
-            />
-          </nav>
-        </div>
-        
-        <div className="mb-4 mt-4">
-          <p className="text-xs font-medium uppercase text-gray-500 mb-2 px-3">Admin</p>
-          <nav className="space-y-1">
-            <NavItem 
-              icon={User} 
-              label="Dashboard" 
-              href="/admin" 
-              active={location.pathname === '/admin'} 
             />
           </nav>
         </div>

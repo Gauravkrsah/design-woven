@@ -1,10 +1,12 @@
 
-import React from 'react';
-import { Sparkles, ExternalLink, MessageCircle, Menu, X } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Sparkles, ExternalLink, MessageCircle, Menu, X, RefreshCw } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { useWebSocketStatus, initWebSocket } from '@/lib/services/websocketService';
+import { toast } from '@/components/ui/use-toast';
 
 const ToolCard = ({ 
   title, 
@@ -34,10 +36,26 @@ const ToolCard = ({
 const RightSidebar: React.FC = () => {
   const isMobile = useIsMobile();
   const [open, setOpen] = React.useState(false);
+  const wsConnected = useWebSocketStatus();
   
   const handleChatClick = () => {
     if (typeof window !== 'undefined' && window.openChatPopup) {
       window.openChatPopup();
+    }
+  };
+
+  const handleReconnectWebSocket = () => {
+    toast({
+      title: "Reconnecting...",
+      description: "Attempting to reconnect to server",
+      duration: 2000,
+    });
+    
+    const success = initWebSocket();
+    if (!success) {
+      setTimeout(() => {
+        initWebSocket();
+      }, 2000);
     }
   };
 
@@ -79,6 +97,27 @@ const RightSidebar: React.FC = () => {
           description="Collection of reusable code snippets for common programming tasks"
           link="https://snippets.example.com"
         />
+      </div>
+
+      <div className={`mt-4 p-2 rounded-md ${wsConnected ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <span className={`text-xs ${wsConnected ? 'text-green-500' : 'text-red-500'}`}>
+              {wsConnected ? 'Connected' : 'Disconnected'}
+            </span>
+          </div>
+          {!wsConnected && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 w-6 p-0" 
+              onClick={handleReconnectWebSocket}
+            >
+              <RefreshCw className="h-3 w-3 text-gray-400" />
+            </Button>
+          )}
+        </div>
       </div>
     </>
   );
