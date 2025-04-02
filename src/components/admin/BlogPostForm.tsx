@@ -54,10 +54,10 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
   React.useEffect(() => {
     if (editBlogPost) {
       setValue('title', editBlogPost.title);
-      setValue('content', editBlogPost.content);
+      setValue('content', editBlogPost.content || '');
       setValue('imageUrl', editBlogPost.imageUrl);
       setValue('excerpt', editBlogPost.excerpt);
-      setValue('category', editBlogPost.category);
+      setValue('category', editBlogPost.category || '');
       setValue('tags', editBlogPost.tags.join(', '));
       setValue('status', editBlogPost.status);
       setValue('authorName', editBlogPost.authorName || editBlogPost.author || 'Gaurav Kr Sah');
@@ -70,11 +70,16 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
     mutationFn: (data: BlogPostFormValues) => {
       // Convert tags from comma-separated string to array
       const formattedData = {
-        ...data,
+        title: data.title, // Ensure title is provided (not optional)
+        content: data.content,
+        imageUrl: data.imageUrl,
+        excerpt: data.excerpt,
+        category: data.category,
         tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
         author: data.authorName,
         readTime: `${Math.floor(Math.random() * 10) + 3} min read`,
-        featured: false
+        featured: false,
+        status: data.status
       };
       
       return createBlogPost(formattedData);
@@ -102,10 +107,15 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
     mutationFn: (data: BlogPostFormValues) => {
       // Convert tags from comma-separated string to array
       const formattedData = {
-        ...data,
+        title: data.title, // Ensure title is provided (not optional)
+        content: data.content,
+        imageUrl: data.imageUrl,
+        excerpt: data.excerpt,
+        category: data.category,
         tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
         author: data.authorName,
-        readTime: editBlogPost.readTime
+        readTime: editBlogPost.readTime,
+        status: data.status
       };
       
       return updateBlogPost(editBlogPost.id, formattedData);

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
@@ -233,7 +232,7 @@ const MobileSidebar = ({ open, setOpen, activePage, setActivePage }) => {
 const Dashboard: React.FC = () => {
   const [activePage, setActivePage] = useState('dashboard');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<{ id: string; type: string } | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<{ id: number; type: string } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [isAddingBlogPost, setIsAddingBlogPost] = useState(false);
@@ -288,7 +287,7 @@ const Dashboard: React.FC = () => {
   });
   
   const deleteProjectMutation = useMutation({
-    mutationFn: (id: string) => apiService.deleteProject(id),
+    mutationFn: (id: number) => apiService.deleteProject(id),
     onSuccess: () => {
       toast({
         title: "Project deleted",
@@ -307,7 +306,7 @@ const Dashboard: React.FC = () => {
   });
   
   const deleteBlogPostMutation = useMutation({
-    mutationFn: (id: string) => apiService.deleteBlogPost(id),
+    mutationFn: (id: number) => apiService.deleteBlogPost(id),
     onSuccess: () => {
       toast({
         title: "Blog post deleted",
@@ -326,7 +325,7 @@ const Dashboard: React.FC = () => {
   });
   
   const deleteMessageMutation = useMutation({
-    mutationFn: (id: string) => apiService.deleteMessage(id),
+    mutationFn: (id: number) => apiService.deleteMessage(id),
     onSuccess: () => {
       toast({
         title: "Message deleted",
@@ -345,7 +344,7 @@ const Dashboard: React.FC = () => {
   });
   
   const deleteOtherWorkMutation = useMutation({
-    mutationFn: (id: string) => apiService.deleteOtherWork(id),
+    mutationFn: (id: number) => apiService.deleteOtherWork(id),
     onSuccess: () => {
       toast({
         title: "Other work deleted",
@@ -364,7 +363,7 @@ const Dashboard: React.FC = () => {
   });
   
   const markAsReadMutation = useMutation({
-    mutationFn: (id: string) => apiService.markMessageAsRead(id),
+    mutationFn: (id: number) => apiService.markMessageAsRead(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
@@ -390,7 +389,7 @@ const Dashboard: React.FC = () => {
     }
   };
   
-  const handleDelete = (id: string, type: string) => {
+  const handleDelete = (id: number, type: string) => {
     setItemToDelete({ id, type });
     setDeleteDialogOpen(true);
   };
@@ -414,7 +413,7 @@ const Dashboard: React.FC = () => {
     setItemToDelete(null);
   };
   
-  const handleView = (id: string, type: string) => {
+  const handleView = (id: number, type: string) => {
     if (type === 'message') {
       markAsReadMutation.mutate(id);
       
@@ -620,7 +619,7 @@ const Dashboard: React.FC = () => {
                         <TableCell>{project.title}</TableCell>
                         <TableCell>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            project.status === 'published' 
+                            project.status === 'Published' 
                               ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
                               : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
                           }`}>
@@ -700,7 +699,7 @@ const Dashboard: React.FC = () => {
                         <TableCell>{post.title}</TableCell>
                         <TableCell>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            post.status === 'published' 
+                            post.status === 'Published' 
                               ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
                               : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
                           }`}>
@@ -852,7 +851,7 @@ const Dashboard: React.FC = () => {
                         <TableCell>{work.category}</TableCell>
                         <TableCell>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            work.status === 'published' 
+                            work.status === 'Published' 
                               ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
                               : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
                           }`}>

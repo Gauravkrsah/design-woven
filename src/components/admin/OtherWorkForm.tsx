@@ -22,7 +22,7 @@ const formSchema = z.object({
   clientName: z.string().optional(),
   completionDate: z.string().optional(),
   projectUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  status: z.enum(['draft', 'published']),
+  status: z.enum(['Draft', 'Published']), // Changed to match the expected case
   technologies: z.string() // We'll split this into an array
 });
 
@@ -48,7 +48,7 @@ const OtherWorkForm: React.FC<OtherWorkFormProps> = ({ open, onOpenChange, editO
       clientName: '',
       completionDate: '',
       projectUrl: '',
-      status: 'draft',
+      status: 'Draft', // Changed to match the expected case
       technologies: ''
     }
   });
@@ -62,8 +62,11 @@ const OtherWorkForm: React.FC<OtherWorkFormProps> = ({ open, onOpenChange, editO
       setValue('clientName', editOtherWork.clientName || '');
       setValue('completionDate', editOtherWork.completionDate || '');
       setValue('projectUrl', editOtherWork.projectUrl || '');
-      setValue('status', editOtherWork.status);
-      setValue('technologies', editOtherWork.technologies.join(', '));
+      // Convert the status to match our enum case if needed
+      setValue('status', editOtherWork.status === 'published' ? 'Published' : 
+              editOtherWork.status === 'draft' ? 'Draft' : editOtherWork.status);
+      setValue('technologies', Array.isArray(editOtherWork.technologies) ? 
+              editOtherWork.technologies.join(', ') : '');
     } else {
       reset();
     }
@@ -73,8 +76,15 @@ const OtherWorkForm: React.FC<OtherWorkFormProps> = ({ open, onOpenChange, editO
     mutationFn: (data: OtherWorkFormValues) => {
       // Convert technologies from comma-separated string to array
       const formattedData = {
-        ...data,
-        technologies: data.technologies.split(',').map(tech => tech.trim()).filter(tech => tech !== '')
+        title: data.title, // Ensure title is provided (not optional)
+        description: data.description,
+        imageUrl: data.imageUrl,
+        category: data.category,
+        date: data.completionDate || new Date().toISOString().split('T')[0], // Ensure date is provided
+        link: data.projectUrl || '',
+        technologies: data.technologies.split(',').map(tech => tech.trim()).filter(tech => tech !== ''),
+        featured: false, // Ensure featured is provided
+        status: data.status
       };
       
       return createOtherWork(formattedData);
@@ -102,8 +112,14 @@ const OtherWorkForm: React.FC<OtherWorkFormProps> = ({ open, onOpenChange, editO
     mutationFn: (data: OtherWorkFormValues) => {
       // Convert technologies from comma-separated string to array
       const formattedData = {
-        ...data,
-        technologies: data.technologies.split(',').map(tech => tech.trim()).filter(tech => tech !== '')
+        title: data.title, // Ensure title is provided (not optional)
+        description: data.description,
+        imageUrl: data.imageUrl,
+        category: data.category,
+        date: data.completionDate || (editOtherWork.date || new Date().toISOString().split('T')[0]), // Use existing date or create new
+        link: data.projectUrl || '',
+        technologies: data.technologies.split(',').map(tech => tech.trim()).filter(tech => tech !== ''),
+        status: data.status
       };
       
       return updateOtherWork(editOtherWork.id, formattedData);
@@ -174,15 +190,18 @@ const OtherWorkForm: React.FC<OtherWorkFormProps> = ({ open, onOpenChange, editO
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
                 <Select
-                  onValueChange={(value) => setValue('status', value as 'draft' | 'published')}
-                  defaultValue={editOtherWork ? editOtherWork.status : 'draft'}
+                  onValueChange={(value) => setValue('status', value as 'Draft' | 'Published')}
+                  defaultValue={editOtherWork ? 
+                    (editOtherWork.status === 'published' ? 'Published' : 
+                     editOtherWork.status === 'draft' ? 'Draft' : editOtherWork.status) 
+                    : 'Draft'}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
+                    <SelectItem value="Draft">Draft</SelectItem>
+                    <SelectItem value="Published">Published</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.status && <p className="text-red-500 text-sm">{errors.status.message}</p>}

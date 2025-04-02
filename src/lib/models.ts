@@ -53,6 +53,7 @@ export interface Content {
   title: string;
   description: string;
   imageUrl: string;
+  thumbnailUrl: string; // Added this property
   platform: string;
   duration: string;
   likes: number;

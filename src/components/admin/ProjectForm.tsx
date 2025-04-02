@@ -73,9 +73,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
     mutationFn: (data: ProjectFormValues) => {
       // Convert tags from comma-separated string to array
       const formattedData = {
-        ...data,
+        title: data.title, // Ensure title is provided (not optional)
+        description: data.description,
+        imageUrl: data.imageUrl,
+        link: data.link,
+        githubLink: data.githubLink,
+        liveDemo: data.liveDemo,
+        category: data.category,
         tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
-        featured: false
+        featured: false,
+        status: data.status
       };
       
       return createProject(formattedData);
@@ -103,8 +110,15 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
     mutationFn: (data: ProjectFormValues) => {
       // Convert tags from comma-separated string to array
       const formattedData = {
-        ...data,
-        tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
+        title: data.title, // Ensure title is provided (not optional)
+        description: data.description,
+        imageUrl: data.imageUrl,
+        link: data.link,
+        githubLink: data.githubLink,
+        liveDemo: data.liveDemo,
+        category: data.category,
+        tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
+        status: data.status
       };
       
       return updateProject(editProject.id, formattedData);

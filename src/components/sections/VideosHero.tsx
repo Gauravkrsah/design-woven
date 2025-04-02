@@ -117,7 +117,7 @@ const VideosHero: React.FC = () => {
                 >
                   <div className="aspect-video w-full overflow-hidden">
                     <img 
-                      src={video.thumbnailUrl} 
+                      src={video.imageUrl} // Using imageUrl as fallback if thumbnailUrl is not available
                       alt={video.title} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
@@ -179,7 +179,7 @@ const VideosHero: React.FC = () => {
               <iframe 
                 width="100%" 
                 height="100%" 
-                src={`${selectedVideo.videoUrl}?autoplay=1`} 
+                src={`${selectedVideo.videoUrl || selectedVideo.link}?autoplay=1`} 
                 title={selectedVideo.title} 
                 frameBorder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
