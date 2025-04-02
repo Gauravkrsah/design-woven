@@ -117,7 +117,7 @@ const VideosHero: React.FC = () => {
                 >
                   <div className="aspect-video w-full overflow-hidden">
                     <img 
-                      src={video.imageUrl} // Using imageUrl as fallback if thumbnailUrl is not available
+                      src={video.thumbnailUrl || video.imageUrl} 
                       alt={video.title} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />

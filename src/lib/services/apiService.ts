@@ -161,6 +161,7 @@ const mockVideos: Content[] = [
     title: 'Building a Full-Stack App with React and Node.js',
     description: 'Learn how to create a complete full-stack application using React for the frontend and Node.js with Express for the backend.',
     imageUrl: '/lovable-uploads/63af4e30-199c-4e86-acf9-0c456ce84647.png',
+    thumbnailUrl: '/lovable-uploads/63af4e30-199c-4e86-acf9-0c456ce84647.png', // Added thumbnailUrl property
     platform: 'YouTube',
     duration: '32:15',
     likes: 1245,
@@ -179,6 +180,7 @@ const mockVideos: Content[] = [
     title: 'Designing Modern UIs with Figma',
     description: 'A step-by-step guide on designing modern and responsive user interfaces using Figma\'s powerful design tools.',
     imageUrl: '/lovable-uploads/71ebdfd0-b894-428b-8b13-23379499b18b.png',
+    thumbnailUrl: '/lovable-uploads/71ebdfd0-b894-428b-8b13-23379499b18b.png', // Added thumbnailUrl property
     platform: 'YouTube',
     duration: '45:22',
     likes: 876,
@@ -197,6 +199,7 @@ const mockVideos: Content[] = [
     title: 'Advanced TypeScript Patterns for React',
     description: 'Explore advanced TypeScript patterns and techniques to improve your React applications with better type safety and developer experience.',
     imageUrl: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&w=800&q=80',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&w=800&q=80', // Added thumbnailUrl property
     platform: 'YouTube',
     duration: '28:17',
     likes: 932,
@@ -475,7 +478,8 @@ export const createVideo = async (video: Omit<Content, 'id' | 'createdAt' | 'upd
     ...video,
     id: mockVideos.length + 1,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
+    thumbnailUrl: video.thumbnailUrl || video.imageUrl // Ensure thumbnailUrl is set
   };
   
   mockVideos.push(newVideo);
