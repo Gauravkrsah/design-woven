@@ -129,9 +129,9 @@ const ProjectDetail: React.FC = () => {
         </div>
         
         <div className="flex flex-wrap gap-4">
-          {project.githubUrl && (
+          {(project.githubUrl || project.githubLink) && (
             <a 
-              href={project.githubUrl} 
+              href={project.githubUrl || project.githubLink} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors"
@@ -140,9 +140,9 @@ const ProjectDetail: React.FC = () => {
             </a>
           )}
           
-          {project.demoUrl && (
+          {(project.demoUrl || project.liveDemo) && (
             <a 
-              href={project.demoUrl} 
+              href={project.demoUrl || project.liveDemo} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition-colors"

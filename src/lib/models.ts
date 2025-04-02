@@ -1,4 +1,3 @@
-
 // Portfolio content types
 
 export interface Project {
@@ -12,6 +11,8 @@ export interface Project {
   link: string;
   githubLink?: string;
   liveDemo?: string;
+  githubUrl?: string; // Added to match ProjectDetail usage
+  demoUrl?: string;   // Added to match ProjectDetail usage
   featured: boolean;
   status: 'Draft' | 'Published';
   createdAt: string;
@@ -31,6 +32,7 @@ export interface BlogPost {
   featured: boolean;
   createdAt: string;
   updatedAt: string;
+  readingTime?: string; // Fix for readingTime vs readTime inconsistency in apiService
 }
 
 export interface OtherWork {
@@ -53,7 +55,7 @@ export interface Content {
   title: string;
   description: string;
   imageUrl: string;
-  thumbnailUrl: string; // Added this property
+  thumbnailUrl: string;
   platform: string;
   duration: string;
   likes: number;
@@ -62,13 +64,14 @@ export interface Content {
   category: string;
   isVideo: boolean;
   link: string;
+  videoUrl?: string; // Added to match VideosHero usage
+  views?: number;     // Added to match apiService usage
   featured: boolean;
   status: 'Draft' | 'Published';
   createdAt: string;
   updatedAt: string;
 }
 
-// Alias Content as Video for API consistency
 export type Video = Content;
 
 export interface Message {

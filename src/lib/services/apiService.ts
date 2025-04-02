@@ -1,6 +1,38 @@
 import { Project, BlogPost, OtherWork, Content, Message, Meeting, Subscriber } from '@/lib/models';
 import { useQuery } from '@tanstack/react-query';
 
+// Dashboard stats interface
+export interface DashboardStats {
+  projects: {
+    total: number;
+    published: number;
+    draft: number;
+  };
+  blogPosts: {
+    total: number;
+    published: number;
+    draft: number;
+  };
+  otherWorks: {
+    total: number;
+    published: number;
+    draft: number;
+  };
+  messages: {
+    total: number;
+    unread: number;
+  };
+  subscribers: {
+    total: number;
+    active: number;
+  };
+  meetings: {
+    total: number;
+    pending: number;
+    confirmed: number;
+  };
+}
+
 // Mock data (replace with actual API calls later)
 let mockProjects: Project[] = [
   {
@@ -13,6 +45,8 @@ let mockProjects: Project[] = [
     link: 'https://github.com/example',
     githubLink: 'https://github.com/example',
     liveDemo: 'https://example.com',
+    githubUrl: 'https://github.com/example',
+    demoUrl: 'https://example.com',
     featured: true,
     status: 'Published',
     createdAt: '2023-01-01T00:00:00.000Z',
@@ -127,6 +161,8 @@ let mockVideos: Content[] = [
     category: 'Tutorial',
     isVideo: true,
     link: 'https://www.youtube.com/watch?v=vjf774RKrLc',
+    videoUrl: 'https://www.youtube.com/embed/vjf774RKrLc',
+    views: 0,
     featured: true,
     status: 'Published',
     createdAt: '2023-08-01T00:00:00.000Z',
@@ -146,6 +182,8 @@ let mockVideos: Content[] = [
     category: 'Tutorial',
     isVideo: true,
     link: 'https://www.youtube.com/watch?v=qSRrxpdMpVc',
+    videoUrl: 'https://www.youtube.com/embed/qSRrxpdMpVc',
+    views: 0,
     featured: false,
     status: 'Published',
     createdAt: '2023-09-15T00:00:00.000Z',
@@ -359,9 +397,7 @@ export const createBlogPost = async (blogPost: Omit<BlogPost, 'id' | 'createdAt'
     id: mockBlogPosts.length + 1,
     createdAt: now,
     updatedAt: now,
-    likes: 0,
-    comments: 0,
-    readingTime: `${Math.floor(Math.random() * 10) + 3} min read`
+    readingTime: blogPost.readTime || `${Math.floor(Math.random() * 10) + 3} min read`
   };
   
   mockBlogPosts.push(newBlogPost);
@@ -515,6 +551,10 @@ export const incrementVideoViews = async (id: number): Promise<Content | undefin
     throw new Error(`Video with id ${id} not found`);
   }
 
+  if (mockVideos[index].views === undefined) {
+    mockVideos[index].views = 0;
+  }
+  
   mockVideos[index].views = (mockVideos[index].views || 0) + 1;
   triggerWebSocketNotification('video_updated');
   return mockVideos[index];
@@ -575,7 +615,7 @@ export const deleteMessage = async (id: number): Promise<void> => {
 };
 
 // Dashboard stats
-export const getDashboardStats = async () => {
+export const getDashboardStats = async (): Promise<DashboardStats> => {
   await simulateApiDelay();
   
   return {
