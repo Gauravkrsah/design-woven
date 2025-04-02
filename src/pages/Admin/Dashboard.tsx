@@ -44,6 +44,7 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { format } from 'date-fns';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as apiService from '@/lib/services/apiService';
+import { Project, BlogPost, OtherWork, Message } from '@/lib/models';
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -58,6 +59,37 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import OtherWorkForm from "@/components/admin/OtherWorkForm";
 import ProjectForm from "@/components/admin/ProjectForm";
 import BlogPostForm from "@/components/admin/BlogPostForm";
+
+interface DashboardStats {
+  projects: {
+    total: number;
+    published: number;
+    draft: number;
+  };
+  blogPosts: {
+    total: number;
+    published: number;
+    draft: number;
+  };
+  otherWorks: {
+    total: number;
+    published: number;
+    draft: number;
+  };
+  messages: {
+    total: number;
+    unread: number;
+  };
+  subscribers: {
+    total: number;
+    active: number;
+  };
+  meetings: {
+    total: number;
+    pending: number;
+    confirmed: number;
+  };
+}
 
 const Sidebar = ({ activePage, setActivePage }) => {
   const menuItems = [
@@ -249,7 +281,7 @@ const Dashboard: React.FC = () => {
   const { 
     data: dashboardStats, 
     isLoading: isLoadingStats 
-  } = useQuery({
+  } = useQuery<DashboardStats>({
     queryKey: ['dashboardStats'],
     queryFn: apiService.getDashboardStats
   });
@@ -257,7 +289,7 @@ const Dashboard: React.FC = () => {
   const { 
     data: projects, 
     isLoading: isLoadingProjects 
-  } = useQuery({
+  } = useQuery<Project[]>({
     queryKey: ['projects'],
     queryFn: apiService.getProjects
   });
@@ -265,7 +297,7 @@ const Dashboard: React.FC = () => {
   const { 
     data: blogPosts, 
     isLoading: isLoadingBlogPosts 
-  } = useQuery({
+  } = useQuery<BlogPost[]>({
     queryKey: ['blogPosts'],
     queryFn: apiService.getBlogPosts
   });
@@ -273,7 +305,7 @@ const Dashboard: React.FC = () => {
   const { 
     data: messages, 
     isLoading: isLoadingMessages 
-  } = useQuery({
+  } = useQuery<Message[]>({
     queryKey: ['messages'],
     queryFn: apiService.getMessages
   });
@@ -281,7 +313,7 @@ const Dashboard: React.FC = () => {
   const {
     data: otherWorks,
     isLoading: isLoadingOtherWorks
-  } = useQuery({
+  } = useQuery<OtherWork[]>({
     queryKey: ['otherWorks'],
     queryFn: apiService.getOtherWorks
   });
@@ -496,7 +528,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="text-sm text-gray-500 dark:text-gray-400">Other Works</p>
-                      <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mt-1">{dashboardStats.otherWorks?.total || 0}</h3>
+                      <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mt-1">{dashboardStats.otherWorks.total}</h3>
                     </div>
                     <div className="h-10 w-10 rounded-lg bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
                       <Briefcase className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -504,9 +536,9 @@ const Dashboard: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-xs text-gray-500 dark:text-gray-400">Published:</span>
-                    <span className="text-xs font-medium text-green-600 dark:text-green-400">{dashboardStats.otherWorks?.published || 0}</span>
+                    <span className="text-xs font-medium text-green-600 dark:text-green-400">{dashboardStats.otherWorks.published}</span>
                     <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">Draft:</span>
-                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">{dashboardStats.otherWorks?.draft || 0}</span>
+                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">{dashboardStats.otherWorks.draft}</span>
                   </div>
                 </div>
                 

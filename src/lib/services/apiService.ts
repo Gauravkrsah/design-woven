@@ -1,4 +1,4 @@
-import { Project, BlogPost, OtherWork, Content } from '@/types';
+import { Project, BlogPost, OtherWork, Content, Message, Meeting, Subscriber } from '@/lib/models';
 import { useQuery } from '@tanstack/react-query';
 
 // Mock data (replace with actual API calls later)
@@ -8,11 +8,13 @@ let mockProjects: Project[] = [
     title: 'AI-Powered Social Media Dashboard',
     description: 'A dashboard that uses AI to analyze social media trends and engagement metrics.',
     imageUrl: '/lovable-uploads/63af4e30-199c-4e86-acf9-0c456ce84647.png',
-    githubUrl: 'https://github.com/example',
-    demoUrl: 'https://example.com',
     tags: ['React', 'Node.js', 'AI', 'TypeScript'],
     category: 'Web Application',
+    link: 'https://github.com/example',
+    githubLink: 'https://github.com/example',
+    liveDemo: 'https://example.com',
     featured: true,
+    status: 'Published',
     createdAt: '2023-01-01T00:00:00.000Z',
     updatedAt: '2023-01-01T00:00:00.000Z',
   },
@@ -21,11 +23,13 @@ let mockProjects: Project[] = [
     title: 'E-commerce Mobile App',
     description: 'A mobile app for an e-commerce platform, built with React Native.',
     imageUrl: '/lovable-uploads/71ebdfd0-b894-428b-8b13-23379499b18b.png',
-    githubUrl: 'https://github.com/example',
-    demoUrl: 'https://example.com',
     tags: ['React Native', 'Mobile App', 'JavaScript'],
     category: 'Mobile Application',
+    link: 'https://github.com/example',
+    githubLink: 'https://github.com/example',
+    liveDemo: 'https://example.com',
     featured: false,
+    status: 'Published',
     createdAt: '2023-02-15T00:00:00.000Z',
     updatedAt: '2023-02-15T00:00:00.000Z',
   },
@@ -34,11 +38,13 @@ let mockProjects: Project[] = [
     title: 'Personal Portfolio Website',
     description: 'A personal portfolio website built with Next.js and Tailwind CSS.',
     imageUrl: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&w=800&q=80',
-    githubUrl: 'https://github.com/example',
-    demoUrl: 'https://example.com',
     tags: ['Next.js', 'Tailwind CSS', 'Web Design'],
     category: 'Website',
+    link: 'https://github.com/example',
+    githubLink: 'https://github.com/example',
+    liveDemo: 'https://example.com',
     featured: true,
+    status: 'Published',
     createdAt: '2023-03-10T00:00:00.000Z',
     updatedAt: '2023-03-10T00:00:00.000Z',
   },
@@ -48,30 +54,30 @@ let mockBlogPosts: BlogPost[] = [
   {
     id: 1,
     title: 'The Future of AI in Web Development',
+    excerpt: 'An article discussing the potential impact of AI on web development.',
     content: 'An article discussing the potential impact of AI on web development.',
     imageUrl: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=800&q=80',
     tags: ['AI', 'Web Development', 'JavaScript'],
-    category: 'Technology',
+    author: 'Gaurav Kr Sah',
+    readTime: '5 min read',
+    status: 'Published',
     featured: true,
     createdAt: '2023-04-01T00:00:00.000Z',
     updatedAt: '2023-04-01T00:00:00.000Z',
-    likes: 100,
-    comments: 20,
-    readingTime: '5 min read',
   },
   {
     id: 2,
     title: 'Mastering React Hooks',
+    excerpt: 'A guide to understanding and using React Hooks effectively.',
     content: 'A guide to understanding and using React Hooks effectively.',
     imageUrl: 'https://images.unsplash.com/photo-1557683304-673a23048d34?auto=format&fit=crop&w=800&q=80',
     tags: ['React', 'Hooks', 'JavaScript'],
-    category: 'Tutorial',
+    author: 'Gaurav Kr Sah',
+    readTime: '7 min read',
+    status: 'Published',
     featured: false,
     createdAt: '2023-05-15T00:00:00.000Z',
     updatedAt: '2023-05-15T00:00:00.000Z',
-    likes: 150,
-    comments: 30,
-    readingTime: '7 min read',
   },
 ];
 
@@ -80,10 +86,13 @@ let mockOtherWorks: OtherWork[] = [
     id: 1,
     title: 'Open Source Contribution to React Native Elements',
     description: 'Contributed a new component to the React Native Elements library.',
-    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-    tags: ['React Native', 'Open Source', 'JavaScript'],
+    content: 'Contributed a new component to the React Native Elements library.',
     category: 'Contribution',
+    date: '2023-06-01',
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    link: 'https://github.com/example',
     featured: true,
+    status: 'Published',
     createdAt: '2023-06-01T00:00:00.000Z',
     updatedAt: '2023-06-01T00:00:00.000Z',
   },
@@ -91,10 +100,13 @@ let mockOtherWorks: OtherWork[] = [
     id: 2,
     title: 'Created a Chrome Extension for Productivity',
     description: 'Developed a Chrome extension to help users stay focused and productive.',
-    imageUrl: 'https://images.unsplash.com/photo-1581276879432-15e50529f34b?auto=format&fit=crop&w=800&q=80',
-    tags: ['Chrome Extension', 'JavaScript', 'Productivity'],
+    content: 'Developed a Chrome extension to help users stay focused and productive.',
     category: 'Extension',
+    date: '2023-07-15',
+    imageUrl: 'https://images.unsplash.com/photo-1581276879432-15e50529f34b?auto=format&fit=crop&w=800&q=80',
+    link: 'https://github.com/example',
     featured: false,
+    status: 'Published',
     createdAt: '2023-07-15T00:00:00.000Z',
     updatedAt: '2023-07-15T00:00:00.000Z',
   },
@@ -107,15 +119,18 @@ let mockVideos: Content[] = [
     description: 'Learn how to build a REST API using Node.js and Express.',
     imageUrl: 'https://i.ytimg.com/vi/vjf774RKrLc/maxresdefault.jpg',
     thumbnailUrl: 'https://i.ytimg.com/vi/vjf774RKrLc/maxresdefault.jpg',
-    videoUrl: 'https://www.youtube.com/embed/vjf774RKrLc',
-    link: 'https://www.youtube.com/watch?v=vjf774RKrLc',
+    platform: 'YouTube',
     duration: '20:30',
-    tags: ['Node.js', 'Express', 'REST API'],
+    likes: 1000,
+    comments: 250,
+    shares: 120,
     category: 'Tutorial',
+    isVideo: true,
+    link: 'https://www.youtube.com/watch?v=vjf774RKrLc',
     featured: true,
+    status: 'Published',
     createdAt: '2023-08-01T00:00:00.000Z',
     updatedAt: '2023-08-01T00:00:00.000Z',
-    views: 1000,
   },
   {
     id: 2,
@@ -123,15 +138,90 @@ let mockVideos: Content[] = [
     description: 'A beginner-friendly guide to React Native development.',
     imageUrl: 'https://i.ytimg.com/vi/qSRrxpdMpVc/maxresdefault.jpg',
     thumbnailUrl: 'https://i.ytimg.com/vi/qSRrxpdMpVc/maxresdefault.jpg',
-    videoUrl: 'https://www.youtube.com/embed/qSRrxpdMpVc',
-    link: 'https://www.youtube.com/watch?v=qSRrxpdMpVc',
+    platform: 'YouTube',
     duration: '15:45',
-    tags: ['React Native', 'Mobile App'],
+    likes: 1500,
+    comments: 320,
+    shares: 200,
     category: 'Tutorial',
+    isVideo: true,
+    link: 'https://www.youtube.com/watch?v=qSRrxpdMpVc',
     featured: false,
+    status: 'Published',
     createdAt: '2023-09-15T00:00:00.000Z',
     updatedAt: '2023-09-15T00:00:00.000Z',
-    views: 1500,
+  },
+];
+
+let mockMessages: Message[] = [
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john@example.com',
+    subject: 'Project Inquiry',
+    message: 'Hello, I am interested in discussing a potential project. Could we schedule a call?',
+    read: false,
+    createdAt: '2023-10-01T00:00:00.000Z',
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    subject: 'Collaboration Opportunity',
+    message: 'Hi there, I found your portfolio and would like to discuss a collaboration opportunity with you.',
+    read: true,
+    createdAt: '2023-10-05T00:00:00.000Z',
+  },
+  {
+    id: 3,
+    name: 'Michael Johnson',
+    email: 'michael@example.com',
+    subject: 'Speaking Engagement',
+    message: 'We would like to invite you to speak at our upcoming tech conference in December.',
+    read: false,
+    createdAt: '2023-10-10T00:00:00.000Z',
+  },
+];
+
+let mockMeetings: Meeting[] = [
+  {
+    id: 1,
+    name: 'Sarah Wilson',
+    email: 'sarah@example.com',
+    subject: 'Initial Project Discussion',
+    message: 'Looking forward to discussing the project requirements.',
+    date: '2023-11-10',
+    time: '10:00 AM',
+    status: 'Confirmed',
+    createdAt: '2023-10-15T00:00:00.000Z',
+  },
+  {
+    id: 2,
+    name: 'David Thompson',
+    email: 'david@example.com',
+    subject: 'Portfolio Review',
+    message: 'Would like to get feedback on my portfolio design.',
+    date: '2023-11-15',
+    time: '2:00 PM',
+    status: 'Pending',
+    createdAt: '2023-10-20T00:00:00.000Z',
+  },
+];
+
+let mockSubscribers: Subscriber[] = [
+  {
+    id: 1,
+    email: 'subscriber1@example.com',
+    name: 'Alex Turner',
+    subscriptionDate: '2023-09-01T00:00:00.000Z',
+    active: true,
+  },
+  {
+    id: 2,
+    email: 'subscriber2@example.com',
+    name: 'Emily Davis',
+    subscriptionDate: '2023-09-15T00:00:00.000Z',
+    active: true,
   },
 ];
 
@@ -150,14 +240,11 @@ const debounce = (func: Function, wait: number) => {
 
 // Trigger the websocket notification when data is updated
 const triggerWebSocketNotification = (event: string) => {
-  // In a real app, this would call the server to trigger a websocket event
-  // For now, we'll simulate it with a custom event
   const wsEvent = new CustomEvent('websocket_event', { 
     detail: { type: event } 
   });
   document.dispatchEvent(wsEvent);
   
-  // Log for debugging
   console.log(`WebSocket event triggered: ${event}`);
 };
 
@@ -373,7 +460,7 @@ export const createVideo = async (video: Omit<Content, 'id' | 'createdAt' | 'upd
     id: mockVideos.length + 1,
     createdAt: now,
     updatedAt: now,
-    thumbnailUrl: video.thumbnailUrl || video.imageUrl, // Ensure thumbnailUrl is set
+    thumbnailUrl: video.thumbnailUrl || video.imageUrl,
     views: 0
   };
   
@@ -391,7 +478,6 @@ export const updateVideo = async (id: number, video: Partial<Content>): Promise<
     throw new Error(`Video with id ${id} not found`);
   }
   
-  // Ensure thumbnailUrl is updated if imageUrl changes
   if (video.imageUrl && !video.thumbnailUrl) {
     video.thumbnailUrl = video.imageUrl;
   }
@@ -434,9 +520,98 @@ export const incrementVideoViews = async (id: number): Promise<Content | undefin
   return mockVideos[index];
 };
 
+// Add new functions for messages and dashboard stats
+export const getMessages = async (): Promise<Message[]> => {
+  await simulateApiDelay();
+  return mockMessages;
+};
+
+export const getMessageById = async (id: number): Promise<Message | undefined> => {
+  await simulateApiDelay();
+  return mockMessages.find(message => message.id === id);
+};
+
+export const createMessage = async (message: Omit<Message, 'id' | 'createdAt' | 'read'>): Promise<Message> => {
+  await simulateApiDelay();
+  
+  const now = new Date().toISOString();
+  const newMessage: Message = {
+    ...message,
+    id: mockMessages.length + 1,
+    read: false,
+    createdAt: now,
+  };
+  
+  mockMessages.push(newMessage);
+  triggerWebSocketNotification('message_updated');
+  
+  return newMessage;
+};
+
+export const markMessageAsRead = async (id: number): Promise<Message> => {
+  await simulateApiDelay();
+  
+  const index = mockMessages.findIndex(m => m.id === id);
+  if (index === -1) {
+    throw new Error(`Message with id ${id} not found`);
+  }
+  
+  mockMessages[index].read = true;
+  triggerWebSocketNotification('message_updated');
+  
+  return mockMessages[index];
+};
+
+export const deleteMessage = async (id: number): Promise<void> => {
+  await simulateApiDelay();
+  
+  const index = mockMessages.findIndex(m => m.id === id);
+  if (index === -1) {
+    throw new Error(`Message with id ${id} not found`);
+  }
+  
+  mockMessages.splice(index, 1);
+  triggerWebSocketNotification('message_updated');
+};
+
+// Dashboard stats
+export const getDashboardStats = async () => {
+  await simulateApiDelay();
+  
+  return {
+    projects: {
+      total: mockProjects.length,
+      published: mockProjects.filter(p => p.status === 'Published').length,
+      draft: mockProjects.filter(p => p.status === 'Draft').length,
+    },
+    blogPosts: {
+      total: mockBlogPosts.length,
+      published: mockBlogPosts.filter(p => p.status === 'Published').length,
+      draft: mockBlogPosts.filter(p => p.status === 'Draft').length,
+    },
+    otherWorks: {
+      total: mockOtherWorks.length,
+      published: mockOtherWorks.filter(p => p.status === 'Published').length,
+      draft: mockOtherWorks.filter(p => p.status === 'Draft').length,
+    },
+    messages: {
+      total: mockMessages.length,
+      unread: mockMessages.filter(m => !m.read).length,
+    },
+    subscribers: {
+      total: mockSubscribers.length,
+      active: mockSubscribers.filter(s => s.active).length,
+    },
+    meetings: {
+      total: mockMeetings.length,
+      pending: mockMeetings.filter(m => m.status === 'Pending').length,
+      confirmed: mockMeetings.filter(m => m.status === 'Confirmed').length,
+    },
+  };
+};
+
 // Update the websocket service integration
 export const setQueryClientForAPI = (queryClient: any) => {
-  // Listen for custom websocket events and invalidate the appropriate queries
   document.addEventListener('websocket_event', ((event: CustomEvent) => {
     const { type } = event.detail;
     
@@ -452,6 +627,9 @@ export const setQueryClientForAPI = (queryClient: any) => {
         break;
       case 'video_updated':
         queryClient.invalidateQueries({ queryKey: ['videos'] });
+        break;
+      case 'message_updated':
+        queryClient.invalidateQueries({ queryKey: ['messages'] });
         break;
       default:
         break;
