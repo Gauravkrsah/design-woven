@@ -1,169 +1,102 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-// WebSocket service for real-time updates
-let socket: WebSocket | null = null;
-let reconnectTimer: number | null = null;
-const listeners: Record<string, Array<(data: any) => void>> = {};
+// Store all event listeners
+interface WebSocketEventListeners {
+  [key: string]: Function[];
+}
 
-// Event types for the application
-export type WebSocketEventType = 
-  | 'project_updated' 
-  | 'blog_updated' 
-  | 'video_updated' 
-  | 'work_updated'
-  | 'connection_status';
+const eventListeners: WebSocketEventListeners = {};
+let isConnected = false;
 
-/**
- * Initialize the WebSocket connection
- */
+// Function to initialize the WebSocket connection
 export const initWebSocket = () => {
-  if (socket) return;
-
-  // Use secure WebSocket if on HTTPS
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const wsUrl = `${protocol}//${window.location.host}/api/ws`;
+  // In a real app, this would establish a real WebSocket connection
+  // For this demo, we're simulating the functionality
+  isConnected = true;
+  console.log('WebSocket connected');
   
-  try {
-    socket = new WebSocket(wsUrl);
+  // Listen for custom websocket events from the API service
+  document.addEventListener('websocket_event', ((event: CustomEvent) => {
+    const { type } = event.detail;
     
-    socket.onopen = () => {
-      console.log('WebSocket connection established');
-      if (reconnectTimer) {
-        clearTimeout(reconnectTimer);
-        reconnectTimer = null;
-      }
-      
-      // Notify listeners about connection status
-      notifyListeners('connection_status', { connected: true });
-    };
-    
-    socket.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data && data.type) {
-          notifyListeners(data.type, data.payload);
-        }
-      } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
-      }
-    };
-    
-    socket.onclose = () => {
-      console.log('WebSocket connection closed');
-      notifyListeners('connection_status', { connected: false });
-      
-      // Attempt to reconnect after 5 seconds
-      socket = null;
-      reconnectTimer = window.setTimeout(() => {
-        initWebSocket();
-      }, 5000);
-    };
-    
-    socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      socket?.close();
-    };
-  } catch (error) {
-    console.error('Failed to create WebSocket connection:', error);
-  }
-};
-
-/**
- * Close the WebSocket connection
- */
-export const closeWebSocket = () => {
-  if (socket) {
-    socket.close();
-    socket = null;
-  }
-  
-  if (reconnectTimer) {
-    clearTimeout(reconnectTimer);
-    reconnectTimer = null;
-  }
-};
-
-/**
- * Subscribe to a specific event type
- */
-export const subscribe = (eventType: WebSocketEventType, callback: (data: any) => void) => {
-  if (!listeners[eventType]) {
-    listeners[eventType] = [];
-  }
-  
-  listeners[eventType].push(callback);
-  
-  // Return unsubscribe function
-  return () => {
-    if (listeners[eventType]) {
-      listeners[eventType] = listeners[eventType].filter(cb => cb !== callback);
+    // Notify all listeners for this event type
+    if (eventListeners[type]) {
+      eventListeners[type].forEach(callback => callback());
     }
-  };
+  }) as EventListener);
+  
+  return true;
 };
 
-/**
- * Notify all listeners of a specific event type
- */
-const notifyListeners = (eventType: WebSocketEventType, data: any) => {
-  if (listeners[eventType]) {
-    listeners[eventType].forEach(callback => {
-      try {
-        callback(data);
-      } catch (error) {
-        console.error(`Error in ${eventType} listener:`, error);
+// Function to close the WebSocket connection
+export const closeWebSocket = () => {
+  isConnected = false;
+  console.log('WebSocket disconnected');
+  
+  // Remove the event listener
+  document.removeEventListener('websocket_event', (() => {}) as EventListener);
+};
+
+// Hook to listen for WebSocket events
+export const useWebSocketEvent = (eventType: string, callback: () => void) => {
+  useEffect(() => {
+    // Add the callback to the list of listeners for this event type
+    if (!eventListeners[eventType]) {
+      eventListeners[eventType] = [];
+    }
+    
+    eventListeners[eventType].push(callback);
+    
+    // Clean up when the component unmounts
+    return () => {
+      if (eventListeners[eventType]) {
+        const index = eventListeners[eventType].indexOf(callback);
+        if (index !== -1) {
+          eventListeners[eventType].splice(index, 1);
+        }
       }
-    });
-  }
+    };
+  }, [eventType, callback]);
 };
 
-/**
- * Send a message through the WebSocket
- */
-export const sendMessage = (type: string, payload: any) => {
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify({ type, payload }));
-    return true;
-  }
-  return false;
-};
-
-/**
- * Hook to use WebSocket in components
- */
-export const useWebSocketStatus = () => {
-  const [isConnected, setIsConnected] = useState(false);
+// Hook to get the current connection status
+export const useWebSocketStatus = (): boolean => {
+  const [connected, setConnected] = useState(isConnected);
   
   useEffect(() => {
-    // Initialize WebSocket connection
-    initWebSocket();
+    // Initially set the connection status
+    setConnected(isConnected);
     
-    // Listen for connection status changes
-    const unsubscribe = subscribe('connection_status', (data) => {
-      setIsConnected(data.connected);
-    });
+    // Define a custom event for connection status changes
+    const handleStatusChange = () => {
+      setConnected(isConnected);
+    };
     
-    // Clean up on unmount
+    // Listen for status changes
+    window.addEventListener('websocket_status_change', handleStatusChange);
+    
+    // Clean up
     return () => {
-      unsubscribe();
+      window.removeEventListener('websocket_status_change', handleStatusChange);
     };
   }, []);
   
-  return isConnected;
+  return connected;
 };
 
-/**
- * Export a hook to use WebSocket events
- */
-export const useWebSocketEvent = (eventType: WebSocketEventType, callback: (data: any) => void) => {
-  useEffect(() => {
-    // Initialize WebSocket if not already
-    initWebSocket();
-    
-    // Subscribe to the event
-    const unsubscribe = subscribe(eventType, callback);
-    
-    // Clean up on unmount
-    return unsubscribe;
-  }, [eventType, callback]);
+// Function to manually emit a WebSocket event (for testing/demo purposes)
+export const emitWebSocketEvent = (eventType: string) => {
+  if (!isConnected) {
+    console.warn('WebSocket is not connected');
+    return false;
+  }
+  
+  // Create a custom event that will be caught by our document event listener
+  const wsEvent = new CustomEvent('websocket_event', { 
+    detail: { type: eventType } 
+  });
+  document.dispatchEvent(wsEvent);
+  
+  return true;
 };

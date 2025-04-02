@@ -1,624 +1,460 @@
+import { Project, BlogPost, OtherWork, Content } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 
-import { QueryClient } from '@tanstack/react-query';
-import { initWebSocket, sendMessage } from './websocketService';
-import { Project, BlogPost, OtherWork, Content, Message, Meeting, Subscriber, Video } from '@/lib/models';
-
-// Store the query client instance to use in mock API functions
-let queryClient: QueryClient | null = null;
-
-export const setQueryClientForAPI = (client: QueryClient) => {
-  queryClient = client;
-  
-  // Initialize WebSocket connection when API service is set up
-  initWebSocket();
-};
-
-// Mock data for projects
-const mockProjects: Project[] = [
+// Mock data (replace with actual API calls later)
+let mockProjects: Project[] = [
   {
     id: 1,
-    title: 'E-commerce Platform',
-    description: 'A full-stack e-commerce platform built with React, Node.js, and MongoDB. Features include product listings, cart functionality, payment processing, and user authentication.',
-    imageUrl: 'https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=1000&q=80',
-    link: 'https://example.com/e-commerce-demo',
-    githubLink: 'https://github.com/yourusername/e-commerce',
-    liveDemo: 'https://example.com/e-commerce-demo',
-    category: 'Web Development',
-    tags: ['React', 'Node.js', 'MongoDB', 'Express', 'Redux'],
-    status: 'Published',
-    featured: true,
-    createdAt: '2023-09-15T10:30:00Z',
-    updatedAt: '2023-10-05T14:20:00Z'
-  },
-  {
-    id: 2,
-    title: 'AI Image Generator',
-    description: 'An application that utilizes OpenAI\'s API to generate images based on text prompts. Built with React and TailwindCSS with a clean and intuitive user interface.',
-    imageUrl: 'https://images.unsplash.com/photo-1633536736282-792c61bcc3ef?auto=format&fit=crop&w=1000&q=80',
-    link: 'https://example.com/ai-generator',
-    githubLink: 'https://github.com/yourusername/ai-image-generator',
-    liveDemo: 'https://example.com/ai-generator',
-    category: 'AI & ML',
-    tags: ['React', 'OpenAI', 'TailwindCSS', 'API Integration'],
-    status: 'Published',
-    featured: true,
-    createdAt: '2023-08-20T09:15:00Z',
-    updatedAt: '2023-09-01T11:45:00Z'
-  },
-  {
-    id: 3,
-    title: 'Task Management System',
-    description: 'A Kanban-style task management application built with React and Firebase. Features include drag-and-drop functionality, task assignments, due dates, and real-time updates.',
-    imageUrl: 'https://images.unsplash.com/photo-1572044162444-ad60f128bdea?auto=format&fit=crop&w=1000&q=80',
-    link: 'https://example.com/task-manager',
-    githubLink: 'https://github.com/yourusername/task-manager',
-    liveDemo: 'https://example.com/task-manager',
-    category: 'Web Development',
-    tags: ['React', 'Firebase', 'DnD', 'Real-time'],
-    status: 'Published',
-    featured: false,
-    createdAt: '2023-07-10T15:45:00Z',
-    updatedAt: '2023-08-05T12:30:00Z'
-  },
-  {
-    id: 4,
-    title: 'Real-time Chat Application',
-    description: 'A real-time chat application built with Socket.io and React. Features include private messaging, group chats, read receipts, and message notifications.',
-    imageUrl: 'https://images.unsplash.com/photo-1565272381829-48ebfded6136?auto=format&fit=crop&w=1000&q=80',
-    link: 'https://example.com/chat-app',
-    githubLink: 'https://github.com/yourusername/chat-app',
-    liveDemo: 'https://example.com/chat-app',
-    category: 'Communication',
-    tags: ['React', 'Socket.io', 'Node.js', 'Real-time'],
-    status: 'Draft',
-    featured: false,
-    createdAt: '2023-06-05T08:20:00Z',
-    updatedAt: '2023-07-01T10:10:00Z'
-  }
-];
-
-// Mock data for blog posts
-const mockBlogPosts: BlogPost[] = [
-  {
-    id: 1,
-    title: 'The Future of JavaScript Frameworks',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    imageUrl: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&w=1000&q=80',
-    excerpt: 'An in-depth look at the future of JavaScript frameworks and the evolving landscape of front-end development.',
-    tags: ['JavaScript', 'React', 'Vue', 'Angular', 'Frameworks'],
-    status: 'Published',
-    author: 'Gaurav Kr Sah',
-    readTime: '6 min read',
-    featured: true,
-    createdAt: '2023-10-05T14:20:00Z',
-    updatedAt: '2023-10-10T09:30:00Z'
-  },
-  {
-    id: 2,
-    title: 'Getting Started with TypeScript',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    imageUrl: 'https://images.unsplash.com/photo-1627398242683-712c886e0ea5?auto=format&fit=crop&w=1000&q=80',
-    excerpt: 'A beginner-friendly guide to TypeScript and how it can improve your JavaScript development workflow.',
-    tags: ['TypeScript', 'JavaScript', 'Web Development'],
-    status: 'Published',
-    author: 'Gaurav Kr Sah',
-    readTime: '8 min read',
-    featured: true,
-    createdAt: '2023-09-20T11:05:00Z',
-    updatedAt: '2023-09-25T13:45:00Z'
-  },
-  {
-    id: 3,
-    title: 'Building Scalable APIs with Node.js',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    imageUrl: 'https://images.unsplash.com/photo-1627398243732-78e453c7f912?auto=format&fit=crop&w=1000&q=80',
-    excerpt: 'Learn how to design and implement scalable APIs using Node.js, Express, and MongoDB.',
-    tags: ['Node.js', 'Express', 'MongoDB', 'API', 'Backend'],
-    status: 'Draft',
-    author: 'Gaurav Kr Sah',
-    readTime: '10 min read',
-    featured: false,
-    createdAt: '2023-09-10T09:15:00Z',
-    updatedAt: '2023-09-15T16:30:00Z'
-  }
-];
-
-// Mock data for messages
-const mockMessages: Message[] = [
-  {
-    id: 1,
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    subject: 'Project Inquiry',
-    message: 'Hi Gaurav, I\'m interested in hiring you for a web development project. Could we schedule a call to discuss the details? Thanks!',
-    read: false,
-    createdAt: '2023-10-15T09:30:00Z'
-  },
-  {
-    id: 2,
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    subject: 'Collaboration Opportunity',
-    message: 'Hello, I have a startup and I\'m looking for a skilled developer to join our team. Would you be interested in discussing a potential collaboration?',
-    read: true,
-    createdAt: '2023-10-12T14:20:00Z'
-  },
-  {
-    id: 3,
-    name: 'Sarah Johnson',
-    email: 'sarah.j@example.com',
-    subject: 'Blog Feedback',
-    message: 'Hi Gaurav, I just read your article on TypeScript and found it incredibly helpful. I have a few questions about implementing it in my project. Would you mind if I asked you a few questions?',
-    read: false,
-    createdAt: '2023-10-10T11:45:00Z'
-  }
-];
-
-// Mock data for videos
-const mockVideos: Content[] = [
-  {
-    id: 1,
-    title: 'Building a Full-Stack App with React and Node.js',
-    description: 'Learn how to create a complete full-stack application using React for the frontend and Node.js with Express for the backend.',
+    title: 'AI-Powered Social Media Dashboard',
+    description: 'A dashboard that uses AI to analyze social media trends and engagement metrics.',
     imageUrl: '/lovable-uploads/63af4e30-199c-4e86-acf9-0c456ce84647.png',
-    thumbnailUrl: '/lovable-uploads/63af4e30-199c-4e86-acf9-0c456ce84647.png', // Added thumbnailUrl property
-    platform: 'YouTube',
-    duration: '32:15',
-    likes: 1245,
-    comments: 83,
-    shares: 120,
-    category: 'Web Development',
-    isVideo: true,
-    link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    status: 'Published',
+    githubUrl: 'https://github.com/example',
+    demoUrl: 'https://example.com',
+    tags: ['React', 'Node.js', 'AI', 'TypeScript'],
+    category: 'Web Application',
     featured: true,
-    createdAt: '2023-09-25T10:30:00Z',
-    updatedAt: '2023-09-25T10:30:00Z'
+    createdAt: '2023-01-01T00:00:00.000Z',
+    updatedAt: '2023-01-01T00:00:00.000Z',
   },
   {
     id: 2,
-    title: 'Designing Modern UIs with Figma',
-    description: 'A step-by-step guide on designing modern and responsive user interfaces using Figma\'s powerful design tools.',
+    title: 'E-commerce Mobile App',
+    description: 'A mobile app for an e-commerce platform, built with React Native.',
     imageUrl: '/lovable-uploads/71ebdfd0-b894-428b-8b13-23379499b18b.png',
-    thumbnailUrl: '/lovable-uploads/71ebdfd0-b894-428b-8b13-23379499b18b.png', // Added thumbnailUrl property
-    platform: 'YouTube',
-    duration: '45:22',
-    likes: 876,
-    comments: 65,
-    shares: 95,
-    category: 'UI/UX Design',
-    isVideo: true,
-    link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    status: 'Published',
-    featured: true,
-    createdAt: '2023-09-15T14:20:00Z',
-    updatedAt: '2023-09-15T14:20:00Z'
+    githubUrl: 'https://github.com/example',
+    demoUrl: 'https://example.com',
+    tags: ['React Native', 'Mobile App', 'JavaScript'],
+    category: 'Mobile Application',
+    featured: false,
+    createdAt: '2023-02-15T00:00:00.000Z',
+    updatedAt: '2023-02-15T00:00:00.000Z',
   },
   {
     id: 3,
-    title: 'Advanced TypeScript Patterns for React',
-    description: 'Explore advanced TypeScript patterns and techniques to improve your React applications with better type safety and developer experience.',
+    title: 'Personal Portfolio Website',
+    description: 'A personal portfolio website built with Next.js and Tailwind CSS.',
     imageUrl: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&w=800&q=80',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&w=800&q=80', // Added thumbnailUrl property
-    platform: 'YouTube',
-    duration: '28:17',
-    likes: 932,
-    comments: 47,
-    shares: 78,
-    category: 'Programming',
-    isVideo: true,
-    link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    status: 'Published',
-    featured: false,
-    createdAt: '2023-09-05T09:15:00Z',
-    updatedAt: '2023-09-05T09:15:00Z'
-  }
+    githubUrl: 'https://github.com/example',
+    demoUrl: 'https://example.com',
+    tags: ['Next.js', 'Tailwind CSS', 'Web Design'],
+    category: 'Website',
+    featured: true,
+    createdAt: '2023-03-10T00:00:00.000Z',
+    updatedAt: '2023-03-10T00:00:00.000Z',
+  },
 ];
 
-// Mock data for other works
-const mockOtherWorks: OtherWork[] = [
+let mockBlogPosts: BlogPost[] = [
   {
     id: 1,
-    title: 'UI/UX Redesign for Mobile App',
-    description: 'Complete redesign of a mobile application\'s user interface and user experience to improve usability and engagement.',
-    imageUrl: 'https://images.unsplash.com/photo-1616400619175-5beda3a17896?auto=format&fit=crop&w=1000&q=80',
-    category: 'UI/UX Design',
-    date: '2023-08-15',
-    link: 'https://example.com/portfolio/ui-redesign',
+    title: 'The Future of AI in Web Development',
+    content: 'An article discussing the potential impact of AI on web development.',
+    imageUrl: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=800&q=80',
+    tags: ['AI', 'Web Development', 'JavaScript'],
+    category: 'Technology',
     featured: true,
-    status: 'Published',
-    createdAt: '2023-08-20T09:15:00Z',
-    updatedAt: '2023-09-01T11:45:00Z'
+    createdAt: '2023-04-01T00:00:00.000Z',
+    updatedAt: '2023-04-01T00:00:00.000Z',
+    likes: 100,
+    comments: 20,
+    readingTime: '5 min read',
   },
   {
     id: 2,
-    title: 'Brand Identity for Startup',
-    description: 'Created a complete brand identity including logo design, color scheme, typography, and brand guidelines for a tech startup.',
-    imageUrl: 'https://images.unsplash.com/photo-1600380303892-12109ae9e097?auto=format&fit=crop&w=1000&q=80',
-    category: 'Branding',
-    date: '2023-07-10',
-    link: 'https://example.com/portfolio/brand-identity',
-    featured: true,
-    status: 'Published',
-    createdAt: '2023-07-15T14:20:00Z',
-    updatedAt: '2023-07-30T10:30:00Z'
-  },
-  {
-    id: 3,
-    title: 'Motion Graphics for Product Launch',
-    description: 'Created animated motion graphics for a product launch campaign, including promotional videos and social media content.',
-    imageUrl: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?auto=format&fit=crop&w=1000&q=80',
-    category: 'Motion Graphics',
-    date: '2023-06-05',
-    link: 'https://example.com/portfolio/motion-graphics',
+    title: 'Mastering React Hooks',
+    content: 'A guide to understanding and using React Hooks effectively.',
+    imageUrl: 'https://images.unsplash.com/photo-1557683304-673a23048d34?auto=format&fit=crop&w=800&q=80',
+    tags: ['React', 'Hooks', 'JavaScript'],
+    category: 'Tutorial',
     featured: false,
-    status: 'Draft',
-    createdAt: '2023-06-10T09:15:00Z',
-    updatedAt: '2023-06-25T11:45:00Z'
-  }
+    createdAt: '2023-05-15T00:00:00.000Z',
+    updatedAt: '2023-05-15T00:00:00.000Z',
+    likes: 150,
+    comments: 30,
+    readingTime: '7 min read',
+  },
 ];
 
-// Mock API function to get dashboard stats
-export const getDashboardStats = async () => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  return {
-    projects: {
-      total: mockProjects.length,
-      published: mockProjects.filter(p => p.status === 'Published').length,
-      draft: mockProjects.filter(p => p.status === 'Draft').length
-    },
-    blogPosts: {
-      total: mockBlogPosts.length,
-      published: mockBlogPosts.filter(p => p.status === 'Published').length,
-      draft: mockBlogPosts.filter(p => p.status === 'Draft').length
-    },
-    messages: {
-      total: mockMessages.length,
-      unread: mockMessages.filter(m => !m.read).length
-    },
-    videos: {
-      total: mockVideos.length,
-      published: mockVideos.filter(v => v.status === 'Published').length,
-      draft: mockVideos.filter(v => v.status === 'Draft').length
-    },
-    otherWorks: {
-      total: mockOtherWorks.length,
-      published: mockOtherWorks.filter(w => w.status === 'Published').length,
-      draft: mockOtherWorks.filter(w => w.status === 'Draft').length
-    }
+let mockOtherWorks: OtherWork[] = [
+  {
+    id: 1,
+    title: 'Open Source Contribution to React Native Elements',
+    description: 'Contributed a new component to the React Native Elements library.',
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    tags: ['React Native', 'Open Source', 'JavaScript'],
+    category: 'Contribution',
+    featured: true,
+    createdAt: '2023-06-01T00:00:00.000Z',
+    updatedAt: '2023-06-01T00:00:00.000Z',
+  },
+  {
+    id: 2,
+    title: 'Created a Chrome Extension for Productivity',
+    description: 'Developed a Chrome extension to help users stay focused and productive.',
+    imageUrl: 'https://images.unsplash.com/photo-1581276879432-15e50529f34b?auto=format&fit=crop&w=800&q=80',
+    tags: ['Chrome Extension', 'JavaScript', 'Productivity'],
+    category: 'Extension',
+    featured: false,
+    createdAt: '2023-07-15T00:00:00.000Z',
+    updatedAt: '2023-07-15T00:00:00.000Z',
+  },
+];
+
+let mockVideos: Content[] = [
+  {
+    id: 1,
+    title: 'Building a REST API with Node.js and Express',
+    description: 'Learn how to build a REST API using Node.js and Express.',
+    imageUrl: 'https://i.ytimg.com/vi/vjf774RKrLc/maxresdefault.jpg',
+    thumbnailUrl: 'https://i.ytimg.com/vi/vjf774RKrLc/maxresdefault.jpg',
+    videoUrl: 'https://www.youtube.com/embed/vjf774RKrLc',
+    link: 'https://www.youtube.com/watch?v=vjf774RKrLc',
+    duration: '20:30',
+    tags: ['Node.js', 'Express', 'REST API'],
+    category: 'Tutorial',
+    featured: true,
+    createdAt: '2023-08-01T00:00:00.000Z',
+    updatedAt: '2023-08-01T00:00:00.000Z',
+    views: 1000,
+  },
+  {
+    id: 2,
+    title: 'Getting Started with React Native',
+    description: 'A beginner-friendly guide to React Native development.',
+    imageUrl: 'https://i.ytimg.com/vi/qSRrxpdMpVc/maxresdefault.jpg',
+    thumbnailUrl: 'https://i.ytimg.com/vi/qSRrxpdMpVc/maxresdefault.jpg',
+    videoUrl: 'https://www.youtube.com/embed/qSRrxpdMpVc',
+    link: 'https://www.youtube.com/watch?v=qSRrxpdMpVc',
+    duration: '15:45',
+    tags: ['React Native', 'Mobile App'],
+    category: 'Tutorial',
+    featured: false,
+    createdAt: '2023-09-15T00:00:00.000Z',
+    updatedAt: '2023-09-15T00:00:00.000Z',
+    views: 1500,
+  },
+];
+
+// Add a debounce utility function to prevent too frequent API calls
+const debounce = (func: Function, wait: number) => {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+  return function(...args: any[]) {
+    const later = () => {
+      timeout = null;
+      func(...args);
+    };
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
   };
 };
 
-// Mock API function to get projects
-export const getProjects = async () => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 800));
+// Trigger the websocket notification when data is updated
+const triggerWebSocketNotification = (event: string) => {
+  // In a real app, this would call the server to trigger a websocket event
+  // For now, we'll simulate it with a custom event
+  const wsEvent = new CustomEvent('websocket_event', { 
+    detail: { type: event } 
+  });
+  document.dispatchEvent(wsEvent);
   
-  return [...mockProjects];
+  // Log for debugging
+  console.log(`WebSocket event triggered: ${event}`);
 };
 
-// Mock API function to get blog posts
-export const getBlogPosts = async () => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  return [...mockBlogPosts];
+// Simulated API delay to mimic real API calls
+const simulateApiDelay = () => new Promise(resolve => setTimeout(resolve, 300));
+
+// Function to fetch all projects
+export const getProjects = async (): Promise<Project[]> => {
+  await simulateApiDelay();
+  return mockProjects;
 };
 
-// Mock API function to get messages
-export const getMessages = async () => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  return [...mockMessages];
+// Function to fetch a single project by ID
+export const getProjectById = async (id: number): Promise<Project | undefined> => {
+  await simulateApiDelay();
+  return mockProjects.find(project => project.id === id);
 };
 
-// Mock API function to get videos
-export const getVideos = async () => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  return [...mockVideos];
+// Function to fetch all blog posts
+export const getBlogPosts = async (): Promise<BlogPost[]> => {
+  await simulateApiDelay();
+  return mockBlogPosts;
 };
 
-// Mock API function to get other works
-export const getOtherWorks = async () => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  return [...mockOtherWorks];
+// Function to fetch a single blog post by ID
+export const getBlogPostById = async (id: number): Promise<BlogPost | undefined> => {
+  await simulateApiDelay();
+  return mockBlogPosts.find(blogPost => blogPost.id === id);
 };
 
-// Mock API function to create a project
+// Function to fetch all other works
+export const getOtherWorks = async (): Promise<OtherWork[]> => {
+  await simulateApiDelay();
+  return mockOtherWorks;
+};
+
+// Function to fetch a single other work by ID
+export const getOtherWorkById = async (id: number): Promise<OtherWork | undefined> => {
+  await simulateApiDelay();
+  return mockOtherWorks.find(otherWork => otherWork.id === id);
+};
+
+// Function to fetch all videos
+export const getVideos = async (): Promise<Content[]> => {
+  await simulateApiDelay();
+  return mockVideos;
+};
+
+// Function to fetch a single video by ID
+export const getVideoById = async (id: number): Promise<Content | undefined> => {
+  await simulateApiDelay();
+  return mockVideos.find(video => video.id === id);
+};
+
+// Update the functions to implement proper synchronization and WebSocket notifications
+
 export const createProject = async (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>): Promise<Project> => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await simulateApiDelay();
   
+  const now = new Date().toISOString();
   const newProject: Project = {
     ...project,
     id: mockProjects.length + 1,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: now,
+    updatedAt: now
   };
   
   mockProjects.push(newProject);
-  
-  // After successful creation, invalidate queries and emit WebSocket event
-  if (queryClient) {
-    queryClient.invalidateQueries({ queryKey: ['projects'] });
-    sendMessage('project_updated', { action: 'create', project });
-  }
+  triggerWebSocketNotification('project_updated');
   
   return newProject;
 };
 
-// Mock API function to update a project
-export const updateProject = async (projectId: number, projectData: Partial<Project>): Promise<Project> => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
+export const updateProject = async (id: number, project: Partial<Project>): Promise<Project> => {
+  await simulateApiDelay();
   
-  const index = mockProjects.findIndex(p => p.id === projectId);
-  
+  const index = mockProjects.findIndex(p => p.id === id);
   if (index === -1) {
-    throw new Error('Project not found');
+    throw new Error(`Project with id ${id} not found`);
   }
   
-  mockProjects[index] = {
+  const updatedProject = {
     ...mockProjects[index],
-    ...projectData,
+    ...project,
     updatedAt: new Date().toISOString()
   };
   
-  // After successful update, invalidate queries and emit WebSocket event
-  if (queryClient) {
-    queryClient.invalidateQueries({ queryKey: ['projects'] });
-    queryClient.invalidateQueries({ queryKey: ['project', projectId] });
-    sendMessage('project_updated', { action: 'update', project: { id: projectId, ...projectData } });
-  }
+  mockProjects[index] = updatedProject;
+  triggerWebSocketNotification('project_updated');
   
-  return mockProjects[index];
+  return updatedProject;
 };
 
-// Mock API function to delete a project
-export const deleteProject = async (projectId: number): Promise<void> => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
+export const deleteProject = async (id: number): Promise<void> => {
+  await simulateApiDelay();
   
-  const index = mockProjects.findIndex(p => p.id === projectId);
-  
+  const index = mockProjects.findIndex(p => p.id === id);
   if (index === -1) {
-    throw new Error('Project not found');
+    throw new Error(`Project with id ${id} not found`);
   }
   
   mockProjects.splice(index, 1);
-  
-  // After successful deletion, invalidate queries and emit WebSocket event
-  if (queryClient) {
-    queryClient.invalidateQueries({ queryKey: ['projects'] });
-    sendMessage('project_updated', { action: 'delete', projectId });
-  }
+  triggerWebSocketNotification('project_updated');
 };
 
-// Mock API function to create a blog post
 export const createBlogPost = async (blogPost: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>): Promise<BlogPost> => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await simulateApiDelay();
   
-  const newBlog: BlogPost = {
+  const now = new Date().toISOString();
+  const newBlogPost: BlogPost = {
     ...blogPost,
     id: mockBlogPosts.length + 1,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: now,
+    updatedAt: now,
+    likes: 0,
+    comments: 0,
+    readingTime: `${Math.floor(Math.random() * 10) + 3} min read`
   };
   
-  mockBlogPosts.push(newBlog);
+  mockBlogPosts.push(newBlogPost);
+  triggerWebSocketNotification('blog_updated');
   
-  // After successful creation, invalidate queries and emit WebSocket event
-  if (queryClient) {
-    queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
-    sendMessage('blog_updated', { action: 'create', blogPost });
-  }
-  
-  return newBlog;
+  return newBlogPost;
 };
 
-export const updateBlogPost = async (blogPostId: number, blogPostData: Partial<BlogPost>): Promise<BlogPost> => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
+export const updateBlogPost = async (id: number, blogPost: Partial<BlogPost>): Promise<BlogPost> => {
+  await simulateApiDelay();
   
-  const index = mockBlogPosts.findIndex(p => p.id === blogPostId);
-  
+  const index = mockBlogPosts.findIndex(p => p.id === id);
   if (index === -1) {
-    throw new Error('Blog post not found');
+    throw new Error(`Blog post with id ${id} not found`);
   }
   
-  mockBlogPosts[index] = {
+  const updatedBlogPost = {
     ...mockBlogPosts[index],
-    ...blogPostData,
+    ...blogPost,
     updatedAt: new Date().toISOString()
   };
   
-  // After successful update, invalidate queries and emit WebSocket event
-  if (queryClient) {
-    queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
-    queryClient.invalidateQueries({ queryKey: ['blogPost', blogPostId] });
-    sendMessage('blog_updated', { action: 'update', blogPost: { id: blogPostId, ...blogPostData } });
-  }
+  mockBlogPosts[index] = updatedBlogPost;
+  triggerWebSocketNotification('blog_updated');
   
-  return mockBlogPosts[index];
+  return updatedBlogPost;
 };
 
-export const deleteBlogPost = async (blogPostId: number): Promise<void> => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
+export const deleteBlogPost = async (id: number): Promise<void> => {
+  await simulateApiDelay();
   
-  const index = mockBlogPosts.findIndex(p => p.id === blogPostId);
-  
+  const index = mockBlogPosts.findIndex(p => p.id === id);
   if (index === -1) {
-    throw new Error('Blog post not found');
+    throw new Error(`Blog post with id ${id} not found`);
   }
   
   mockBlogPosts.splice(index, 1);
-  
-  // After successful deletion, invalidate queries and emit WebSocket event
-  if (queryClient) {
-    queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
-    sendMessage('blog_updated', { action: 'delete', blogPostId });
-  }
+  triggerWebSocketNotification('blog_updated');
 };
 
-// Mock API function to create a video
-export const createVideo = async (video: Omit<Content, 'id' | 'createdAt' | 'updatedAt'>): Promise<Content> => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
+export const createOtherWork = async (otherWork: Omit<OtherWork, 'id' | 'createdAt' | 'updatedAt'>): Promise<OtherWork> => {
+  await simulateApiDelay();
   
+  const now = new Date().toISOString();
+  const newOtherWork: OtherWork = {
+    ...otherWork,
+    id: mockOtherWorks.length + 1,
+    createdAt: now,
+    updatedAt: now
+  };
+  
+  mockOtherWorks.push(newOtherWork);
+  triggerWebSocketNotification('other_work_updated');
+  
+  return newOtherWork;
+};
+
+export const updateOtherWork = async (id: number, otherWork: Partial<OtherWork>): Promise<OtherWork> => {
+  await simulateApiDelay();
+  
+  const index = mockOtherWorks.findIndex(p => p.id === id);
+  if (index === -1) {
+    throw new Error(`Other work with id ${id} not found`);
+  }
+  
+  const updatedOtherWork = {
+    ...mockOtherWorks[index],
+    ...otherWork,
+    updatedAt: new Date().toISOString()
+  };
+  
+  mockOtherWorks[index] = updatedOtherWork;
+  triggerWebSocketNotification('other_work_updated');
+  
+  return updatedOtherWork;
+};
+
+export const deleteOtherWork = async (id: number): Promise<void> => {
+  await simulateApiDelay();
+  
+  const index = mockOtherWorks.findIndex(p => p.id === id);
+  if (index === -1) {
+    throw new Error(`Other work with id ${id} not found`);
+  }
+  
+  mockOtherWorks.splice(index, 1);
+  triggerWebSocketNotification('other_work_updated');
+};
+
+export const createVideo = async (video: Omit<Content, 'id' | 'createdAt' | 'updatedAt'>): Promise<Content> => {
+  await simulateApiDelay();
+  
+  const now = new Date().toISOString();
   const newVideo: Content = {
     ...video,
     id: mockVideos.length + 1,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    thumbnailUrl: video.thumbnailUrl || video.imageUrl // Ensure thumbnailUrl is set
+    createdAt: now,
+    updatedAt: now,
+    thumbnailUrl: video.thumbnailUrl || video.imageUrl, // Ensure thumbnailUrl is set
+    views: 0
   };
   
   mockVideos.push(newVideo);
-  
-  // After successful creation, invalidate queries and emit WebSocket event
-  if (queryClient) {
-    queryClient.invalidateQueries({ queryKey: ['videos'] });
-    sendMessage('video_updated', { action: 'create', video });
-  }
+  triggerWebSocketNotification('video_updated');
   
   return newVideo;
 };
 
-export const updateVideo = async (videoId: number, videoData: Partial<Content>): Promise<Content> => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
+export const updateVideo = async (id: number, video: Partial<Content>): Promise<Content> => {
+  await simulateApiDelay();
   
-  const index = mockVideos.findIndex(v => v.id === videoId);
-  
+  const index = mockVideos.findIndex(v => v.id === id);
   if (index === -1) {
-    throw new Error('Video not found');
+    throw new Error(`Video with id ${id} not found`);
   }
   
-  mockVideos[index] = {
+  // Ensure thumbnailUrl is updated if imageUrl changes
+  if (video.imageUrl && !video.thumbnailUrl) {
+    video.thumbnailUrl = video.imageUrl;
+  }
+  
+  const updatedVideo = {
     ...mockVideos[index],
-    ...videoData,
+    ...video,
     updatedAt: new Date().toISOString()
   };
   
-  // After successful update, invalidate queries and emit WebSocket event
-  if (queryClient) {
-    queryClient.invalidateQueries({ queryKey: ['videos'] });
-    queryClient.invalidateQueries({ queryKey: ['video', videoId] });
-    sendMessage('video_updated', { action: 'update', video: { id: videoId, ...videoData } });
-  }
+  mockVideos[index] = updatedVideo;
+  triggerWebSocketNotification('video_updated');
   
-  return mockVideos[index];
+  return updatedVideo;
 };
 
-export const deleteVideo = async (videoId: number): Promise<void> => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
+export const deleteVideo = async (id: number): Promise<void> => {
+  await simulateApiDelay();
   
-  const index = mockVideos.findIndex(v => v.id === videoId);
-  
+  const index = mockVideos.findIndex(v => v.id === id);
   if (index === -1) {
-    throw new Error('Video not found');
+    throw new Error(`Video with id ${id} not found`);
   }
   
   mockVideos.splice(index, 1);
-  
-  // After successful deletion, invalidate queries and emit WebSocket event
-  if (queryClient) {
-    queryClient.invalidateQueries({ queryKey: ['videos'] });
-    sendMessage('video_updated', { action: 'delete', videoId });
-  }
+  triggerWebSocketNotification('video_updated');
 };
 
-// Mock API function to mark a message as read
-export const markMessageAsRead = async (id: number) => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  const index = mockMessages.findIndex(m => m.id === id);
-  
+// Function to increment views for a video
+export const incrementVideoViews = async (id: number): Promise<Content | undefined> => {
+  await simulateApiDelay();
+
+  const index = mockVideos.findIndex(v => v.id === id);
   if (index === -1) {
-    throw new Error('Message not found');
+    throw new Error(`Video with id ${id} not found`);
   }
-  
-  mockMessages[index].read = true;
-  
-  return mockMessages[index];
+
+  mockVideos[index].views = (mockVideos[index].views || 0) + 1;
+  triggerWebSocketNotification('video_updated');
+  return mockVideos[index];
 };
 
-// Mock API function to delete a message
-export const deleteMessage = async (id: number) => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  const index = mockMessages.findIndex(m => m.id === id);
-  
-  if (index === -1) {
-    throw new Error('Message not found');
-  }
-  
-  mockMessages.splice(index, 1);
-  
-  return { success: true, message: 'Message deleted successfully' };
-};
-
-// Mock API function to create an other work
-export const createOtherWork = async (workData: Omit<OtherWork, 'id' | 'createdAt' | 'updatedAt'>) => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  const newWork: OtherWork = {
-    ...workData,
-    id: mockOtherWorks.length + 1,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-  
-  mockOtherWorks.push(newWork);
-  
-  return newWork;
-};
-
-// Mock API function to update an other work
-export const updateOtherWork = async (id: number, workData: Partial<OtherWork>) => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  const index = mockOtherWorks.findIndex(w => w.id === id);
-  
-  if (index === -1) {
-    throw new Error('Work not found');
-  }
-  
-  mockOtherWorks[index] = {
-    ...mockOtherWorks[index],
-    ...workData,
-    updatedAt: new Date().toISOString()
-  };
-  
-  return mockOtherWorks[index];
-};
-
-// Mock API function to delete an other work
-export const deleteOtherWork = async (id: number) => {
-  // Wait for a short delay to simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  const index = mockOtherWorks.findIndex(w => w.id === id);
-  
-  if (index === -1) {
-    throw new Error('Work not found');
-  }
-  
-  mockOtherWorks.splice(index, 1);
-  
-  return { success: true, message: 'Work deleted successfully' };
+// Update the websocket service integration
+export const setQueryClientForAPI = (queryClient: any) => {
+  // Listen for custom websocket events and invalidate the appropriate queries
+  document.addEventListener('websocket_event', ((event: CustomEvent) => {
+    const { type } = event.detail;
+    
+    switch (type) {
+      case 'project_updated':
+        queryClient.invalidateQueries({ queryKey: ['projects'] });
+        break;
+      case 'blog_updated':
+        queryClient.invalidateQueries({ queryKey: ['blogs'] });
+        break;
+      case 'other_work_updated':
+        queryClient.invalidateQueries({ queryKey: ['other-works'] });
+        break;
+      case 'video_updated':
+        queryClient.invalidateQueries({ queryKey: ['videos'] });
+        break;
+      default:
+        break;
+    }
+  }) as EventListener);
 };
