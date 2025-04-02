@@ -10,7 +10,8 @@ const eventListeners: WebSocketEventListeners = {};
 let isConnected = false;
 let reconnectInterval: ReturnType<typeof setInterval> | null = null;
 let reconnectAttempts = 0;
-const MAX_RECONNECT_ATTEMPTS = 5;
+const MAX_RECONNECT_ATTEMPTS = 10;
+const RECONNECT_DELAY = 2000;
 
 // Function to initialize the WebSocket connection
 export const initWebSocket = () => {
@@ -84,17 +85,29 @@ const startReconnect = () => {
       return;
     }
     
-    if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
-      console.log('Maximum reconnection attempts reached');
+    console.log(`Attempting to reconnect (${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS})...`);
+    reconnectAttempts++;
+    
+    const success = initWebSocket();
+    
+    if (success) {
+      console.log('Reconnection successful');
       clearInterval(reconnectInterval!);
       reconnectInterval = null;
       return;
     }
     
-    console.log(`Attempting to reconnect (${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS})...`);
-    reconnectAttempts++;
-    initWebSocket();
-  }, 3000); // Try to reconnect every 3 seconds
+    if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+      console.log('Maximum reconnection attempts reached');
+      clearInterval(reconnectInterval!);
+      reconnectInterval = null;
+      // Try again after a longer delay
+      setTimeout(() => {
+        reconnectAttempts = 0;
+        startReconnect();
+      }, RECONNECT_DELAY * 5);
+    }
+  }, RECONNECT_DELAY);
 };
 
 // Hook to listen for WebSocket events

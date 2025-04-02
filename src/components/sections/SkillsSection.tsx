@@ -55,7 +55,7 @@ const SkillsSection: React.FC = () => {
   const aiSkills = ["TensorFlow", "PyTorch", "Machine Learning", "Data Analysis", "NLP", "Computer Vision", "Chatbots"];
   
   return (
-    <section ref={sectionRef} className="py-20 container mx-auto px-4 md:px-6">
+    <section ref={sectionRef} className="py-20 container mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}

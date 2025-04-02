@@ -14,6 +14,7 @@ import { MessageCircle, Mail, Calendar } from 'lucide-react';
 import { QueryClient } from '@tanstack/react-query';
 import { setQueryClientForAPI } from '@/lib/services/apiService';
 import { useWebSocketStatus, initWebSocket } from '@/lib/services/websocketService';
+import { toast } from '@/components/ui/use-toast';
 
 // Global popup states are managed through window object
 // Each page can trigger these popups
@@ -36,14 +37,27 @@ const Index: React.FC = () => {
   const wsConnected = useWebSocketStatus();
 
   useEffect(() => {
-    document.title = "Gaurav Kr Sah | Portfolio";
+    document.title = "Portfolio | Full Stack Developer & AI Enthusiast";
     
     // Initialize query client for API service
     const queryClient = new QueryClient();
     setQueryClientForAPI(queryClient);
     
-    // Initialize WebSocket connection
-    initWebSocket();
+    // Initialize WebSocket connection with retry mechanism
+    const connectWebSocket = () => {
+      const success = initWebSocket();
+      if (!success) {
+        console.log("WebSocket connection failed, retrying...");
+        setTimeout(connectWebSocket, 3000);
+      } else {
+        toast({
+          title: "Connected",
+          description: "Real-time updates are now enabled",
+        });
+      }
+    };
+    
+    connectWebSocket();
     
     // Show subscribe popup after 5 seconds for new visitors
     const hasVisited = localStorage.getItem('hasVisited');
@@ -96,8 +110,8 @@ const Index: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* WebSocket connection indicator (visible only in development) */}
       {process.env.NODE_ENV === 'development' && (
-        <div className={`fixed top-2 right-2 z-50 px-2 py-1 text-xs rounded-full transition-colors ${
-          wsConnected ? 'bg-green-500/20 text-green-500 border border-green-500/20' : 'bg-red-500/20 text-red-500 border border-red-500/20'
+        <div className={`fixed top-2 right-2 z-50 px-3 py-1.5 text-xs rounded-full transition-colors ${
+          wsConnected ? 'bg-green-500/20 text-green-500 border border-green-500/30' : 'bg-red-500/20 text-red-500 border border-red-500/30'
         }`}>
           {wsConnected ? 'WebSocket Connected' : 'WebSocket Disconnected'}
         </div>
