@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { initWebSocket, sendMessage } from './websocketService';
+import { Project, BlogPost, OtherWork, Content, Message, Meeting, Subscriber } from '@/lib/models';
 
 // Store the query client instance to use in mock API functions
 let queryClient: QueryClient | null = null;
@@ -316,7 +317,7 @@ export const getOtherWorks = async () => {
 };
 
 // Mock API function to create a project
-export const createProject = async (project: Project): Promise<Project> => {
+export const createProject = async (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>): Promise<Project> => {
   // Wait for a short delay to simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
   
@@ -388,7 +389,7 @@ export const deleteProject = async (projectId: string): Promise<void> => {
 };
 
 // Mock API function to create a blog post
-export const createBlogPost = async (blogPost: BlogPost): Promise<BlogPost> => {
+export const createBlogPost = async (blogPost: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>): Promise<BlogPost> => {
   // Wait for a short delay to simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
   
@@ -461,7 +462,7 @@ export const deleteBlogPost = async (blogPostId: string): Promise<void> => {
 };
 
 // Mock API function to create a video
-export const createVideo = async (video: Video): Promise<Video> => {
+export const createVideo = async (video: Omit<Content, 'id' | 'createdAt' | 'updatedAt'>): Promise<Content> => {
   // Wait for a short delay to simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
   
@@ -483,7 +484,7 @@ export const createVideo = async (video: Video): Promise<Video> => {
   return newVideo;
 };
 
-export const updateVideo = async (videoId: string, videoData: Partial<Video>): Promise<Video> => {
+export const updateVideo = async (videoId: string, videoData: Partial<Content>): Promise<Content> => {
   // Wait for a short delay to simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
   
@@ -508,7 +509,7 @@ export const updateVideo = async (videoId: string, videoData: Partial<Video>): P
     sendMessage('video_updated', { action: 'update', video: { id: videoId, ...videoData } });
   }
   
-  return { id: videoId, ...videoData } as Video;
+  return { id: videoId, ...videoData } as Content;
 };
 
 export const deleteVideo = async (videoId: string): Promise<void> => {

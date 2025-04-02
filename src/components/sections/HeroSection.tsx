@@ -102,7 +102,7 @@ const HeroSection: React.FC = () => {
       if (heroImage) {
         const container = document.querySelector('.hero-image-container');
         
-        container?.addEventListener('mousemove', (e) => {
+        container?.addEventListener('mousemove', (e: MouseEvent) => {
           if (container instanceof HTMLElement && heroImage instanceof HTMLElement) {
             const rect = container.getBoundingClientRect();
             const x = e.clientX - rect.left;

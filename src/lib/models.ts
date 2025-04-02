@@ -65,6 +65,9 @@ export interface Content {
   updatedAt: string;
 }
 
+// Alias Content as Video for API consistency
+export type Video = Content;
+
 export interface Message {
   id: number;
   name: string;
