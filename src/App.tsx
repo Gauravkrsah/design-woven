@@ -83,8 +83,16 @@ const App: React.FC = () => {
     // Initialize API service with query client
     setQueryClientForAPI(queryClient);
     
-    // Initialize WebSocket
-    initWebSocket();
+    // Initialize WebSocket with retry mechanism
+    const initWs = () => {
+      const connected = initWebSocket();
+      if (!connected) {
+        // If connection fails, try again after a delay
+        setTimeout(initWs, 3000);
+      }
+    };
+    
+    initWs();
     
     // Clean up on unmount
     return () => {

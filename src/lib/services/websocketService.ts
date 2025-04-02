@@ -8,25 +8,54 @@ interface WebSocketEventListeners {
 
 const eventListeners: WebSocketEventListeners = {};
 let isConnected = false;
+let reconnectInterval: ReturnType<typeof setInterval> | null = null;
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 5;
 
 // Function to initialize the WebSocket connection
 export const initWebSocket = () => {
-  // In a real app, this would establish a real WebSocket connection
-  // For this demo, we're simulating the functionality
-  isConnected = true;
-  console.log('WebSocket connected');
+  if (isConnected) {
+    return true; // Already connected
+  }
   
-  // Listen for custom websocket events from the API service
-  document.addEventListener('websocket_event', ((event: CustomEvent) => {
-    const { type } = event.detail;
+  try {
+    // In a real app, this would establish a real WebSocket connection
+    // For this demo, we're simulating the functionality
+    isConnected = true;
+    console.log('WebSocket connected');
     
-    // Notify all listeners for this event type
-    if (eventListeners[type]) {
-      eventListeners[type].forEach(callback => callback());
+    // Reset reconnect attempts on successful connection
+    reconnectAttempts = 0;
+    
+    // Clear any existing reconnect interval
+    if (reconnectInterval) {
+      clearInterval(reconnectInterval);
+      reconnectInterval = null;
     }
-  }) as EventListener);
-  
-  return true;
+    
+    // Listen for custom websocket events from the API service
+    document.addEventListener('websocket_event', ((event: CustomEvent) => {
+      const { type } = event.detail;
+      
+      // Notify all listeners for this event type
+      if (eventListeners[type]) {
+        eventListeners[type].forEach(callback => callback());
+      }
+    }) as EventListener);
+    
+    // Dispatch a connection event
+    const statusEvent = new CustomEvent('websocket_status_change');
+    document.dispatchEvent(statusEvent);
+    
+    return true;
+  } catch (error) {
+    console.error('WebSocket connection error:', error);
+    isConnected = false;
+    
+    // Attempt to reconnect
+    startReconnect();
+    return false;
+  }
 };
 
 // Function to close the WebSocket connection
@@ -36,6 +65,36 @@ export const closeWebSocket = () => {
   
   // Remove the event listener
   document.removeEventListener('websocket_event', (() => {}) as EventListener);
+  
+  // Dispatch a status change event
+  const statusEvent = new CustomEvent('websocket_status_change');
+  document.dispatchEvent(statusEvent);
+};
+
+// Function to start reconnection attempts
+const startReconnect = () => {
+  if (reconnectInterval) {
+    clearInterval(reconnectInterval);
+  }
+  
+  reconnectInterval = setInterval(() => {
+    if (isConnected) {
+      clearInterval(reconnectInterval!);
+      reconnectInterval = null;
+      return;
+    }
+    
+    if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+      console.log('Maximum reconnection attempts reached');
+      clearInterval(reconnectInterval!);
+      reconnectInterval = null;
+      return;
+    }
+    
+    console.log(`Attempting to reconnect (${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS})...`);
+    reconnectAttempts++;
+    initWebSocket();
+  }, 3000); // Try to reconnect every 3 seconds
 };
 
 // Hook to listen for WebSocket events
@@ -64,23 +123,27 @@ export const useWebSocketEvent = (eventType: string, callback: () => void) => {
 export const useWebSocketStatus = (): boolean => {
   const [connected, setConnected] = useState(isConnected);
   
+  const handleStatusChange = useCallback(() => {
+    setConnected(isConnected);
+  }, []);
+  
   useEffect(() => {
     // Initially set the connection status
     setConnected(isConnected);
     
-    // Define a custom event for connection status changes
-    const handleStatusChange = () => {
-      setConnected(isConnected);
-    };
-    
     // Listen for status changes
     window.addEventListener('websocket_status_change', handleStatusChange);
+    
+    // Attempt to initialize connection if not connected
+    if (!isConnected) {
+      initWebSocket();
+    }
     
     // Clean up
     return () => {
       window.removeEventListener('websocket_status_change', handleStatusChange);
     };
-  }, []);
+  }, [handleStatusChange]);
   
   return connected;
 };
