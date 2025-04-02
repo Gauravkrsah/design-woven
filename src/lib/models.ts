@@ -44,6 +44,8 @@ export interface OtherWork {
   link?: string;
   featured: boolean;
   status: 'Draft' | 'Published';
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Content {

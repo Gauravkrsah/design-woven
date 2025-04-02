@@ -18,11 +18,12 @@ const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   imageUrl: z.string().url('Must be a valid URL'),
-  demoUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  githubUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  link: z.string().default('#'),
+  githubLink: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  liveDemo: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   category: z.string().min(2, 'Category is required'),
   tags: z.string(), // We'll split this into an array
-  status: z.enum(['draft', 'published'])
+  status: z.enum(['Draft', 'Published'])
 });
 
 export type ProjectFormValues = z.infer<typeof formSchema>;
@@ -43,11 +44,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
       title: '',
       description: '',
       imageUrl: '',
-      demoUrl: '',
-      githubUrl: '',
+      link: '#',
+      githubLink: '',
+      liveDemo: '',
       category: '',
       tags: '',
-      status: 'draft'
+      status: 'Draft'
     }
   });
   
@@ -56,8 +58,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
       setValue('title', editProject.title);
       setValue('description', editProject.description);
       setValue('imageUrl', editProject.imageUrl);
-      setValue('demoUrl', editProject.demoUrl || '');
-      setValue('githubUrl', editProject.githubUrl || '');
+      setValue('link', editProject.link || '#');
+      setValue('githubLink', editProject.githubLink || '');
+      setValue('liveDemo', editProject.liveDemo || '');
       setValue('category', editProject.category);
       setValue('tags', editProject.tags.join(', '));
       setValue('status', editProject.status);
@@ -71,7 +74,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
       // Convert tags from comma-separated string to array
       const formattedData = {
         ...data,
-        tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
+        tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
+        featured: false
       };
       
       return createProject(formattedData);
@@ -161,17 +165,23 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
               {errors.imageUrl && <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>}
             </div>
             
+            <div className="space-y-2">
+              <Label htmlFor="link">Project Link</Label>
+              <Input id="link" {...register('link')} />
+              {errors.link && <p className="text-red-500 text-sm">{errors.link.message}</p>}
+            </div>
+            
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="demoUrl">Demo URL (Optional)</Label>
-                <Input id="demoUrl" {...register('demoUrl')} />
-                {errors.demoUrl && <p className="text-red-500 text-sm">{errors.demoUrl.message}</p>}
+                <Label htmlFor="githubLink">GitHub URL (Optional)</Label>
+                <Input id="githubLink" {...register('githubLink')} />
+                {errors.githubLink && <p className="text-red-500 text-sm">{errors.githubLink.message}</p>}
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="githubUrl">GitHub URL (Optional)</Label>
-                <Input id="githubUrl" {...register('githubUrl')} />
-                {errors.githubUrl && <p className="text-red-500 text-sm">{errors.githubUrl.message}</p>}
+                <Label htmlFor="liveDemo">Live Demo URL (Optional)</Label>
+                <Input id="liveDemo" {...register('liveDemo')} />
+                {errors.liveDemo && <p className="text-red-500 text-sm">{errors.liveDemo.message}</p>}
               </div>
             </div>
             
@@ -185,15 +195,15 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
                 <Select
-                  onValueChange={(value) => setValue('status', value as 'draft' | 'published')}
-                  defaultValue={editProject ? editProject.status : 'draft'}
+                  onValueChange={(value) => setValue('status', value as 'Draft' | 'Published')}
+                  defaultValue={editProject ? editProject.status : 'Draft'}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
+                    <SelectItem value="Draft">Draft</SelectItem>
+                    <SelectItem value="Published">Published</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.status && <p className="text-red-500 text-sm">{errors.status.message}</p>}

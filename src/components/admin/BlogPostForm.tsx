@@ -21,7 +21,7 @@ const formSchema = z.object({
   excerpt: z.string().min(10, 'Excerpt must be at least 10 characters'),
   category: z.string().min(2, 'Category is required'),
   tags: z.string(), // We'll split this into an array
-  status: z.enum(['draft', 'published']),
+  status: z.enum(['Draft', 'Published']),
   authorName: z.string().min(2, 'Author name is required')
 });
 
@@ -46,7 +46,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
       excerpt: '',
       category: '',
       tags: '',
-      status: 'draft',
+      status: 'Draft',
       authorName: 'Gaurav Kr Sah'
     }
   });
@@ -60,7 +60,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
       setValue('category', editBlogPost.category);
       setValue('tags', editBlogPost.tags.join(', '));
       setValue('status', editBlogPost.status);
-      setValue('authorName', editBlogPost.authorName);
+      setValue('authorName', editBlogPost.authorName || editBlogPost.author || 'Gaurav Kr Sah');
     } else {
       reset();
     }
@@ -71,7 +71,10 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
       // Convert tags from comma-separated string to array
       const formattedData = {
         ...data,
-        tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
+        tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
+        author: data.authorName,
+        readTime: `${Math.floor(Math.random() * 10) + 3} min read`,
+        featured: false
       };
       
       return createBlogPost(formattedData);
@@ -100,7 +103,9 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
       // Convert tags from comma-separated string to array
       const formattedData = {
         ...data,
-        tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
+        tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
+        author: data.authorName,
+        readTime: editBlogPost.readTime
       };
       
       return updateBlogPost(editBlogPost.id, formattedData);
@@ -185,15 +190,15 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
                 <Select
-                  onValueChange={(value) => setValue('status', value as 'draft' | 'published')}
-                  defaultValue={editBlogPost ? editBlogPost.status : 'draft'}
+                  onValueChange={(value) => setValue('status', value as 'Draft' | 'Published')}
+                  defaultValue={editBlogPost ? editBlogPost.status : 'Draft'}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
+                    <SelectItem value="Draft">Draft</SelectItem>
+                    <SelectItem value="Published">Published</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.status && <p className="text-red-500 text-sm">{errors.status.message}</p>}
