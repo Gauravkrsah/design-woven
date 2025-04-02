@@ -1,4 +1,6 @@
 
+import React, { useState, useEffect } from 'react';
+
 // WebSocket service for real-time updates
 let socket: WebSocket | null = null;
 let reconnectTimer: number | null = null;
@@ -130,9 +132,9 @@ export const sendMessage = (type: string, payload: any) => {
  * Hook to use WebSocket in components
  */
 export const useWebSocketStatus = () => {
-  const [isConnected, setIsConnected] = React.useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   
-  React.useEffect(() => {
+  useEffect(() => {
     // Initialize WebSocket connection
     initWebSocket();
     
@@ -154,7 +156,7 @@ export const useWebSocketStatus = () => {
  * Export a hook to use WebSocket events
  */
 export const useWebSocketEvent = (eventType: WebSocketEventType, callback: (data: any) => void) => {
-  React.useEffect(() => {
+  useEffect(() => {
     // Initialize WebSocket if not already
     initWebSocket();
     
