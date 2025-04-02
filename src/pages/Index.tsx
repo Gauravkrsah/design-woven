@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { MessageCircle, Mail, Calendar } from 'lucide-react';
 import { QueryClient } from '@tanstack/react-query';
 import { setQueryClientForAPI } from '@/lib/services/apiService';
+import { useWebSocketStatus, initWebSocket } from '@/lib/services/websocketService';
 
 // Global popup states are managed through window object
 // Each page can trigger these popups
@@ -31,6 +32,8 @@ const Index: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const isMobile = useIsMobile();
+  // Get WebSocket connection status
+  const wsConnected = useWebSocketStatus();
 
   useEffect(() => {
     document.title = "Gaurav Kr Sah | Portfolio";
@@ -38,6 +41,9 @@ const Index: React.FC = () => {
     // Initialize query client for API service
     const queryClient = new QueryClient();
     setQueryClientForAPI(queryClient);
+    
+    // Initialize WebSocket connection
+    initWebSocket();
     
     // Show subscribe popup after 5 seconds for new visitors
     const hasVisited = localStorage.getItem('hasVisited');
@@ -88,6 +94,15 @@ const Index: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
+      {/* WebSocket connection indicator (visible only in development) */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className={`fixed top-2 right-2 z-50 px-2 py-1 text-xs rounded-full transition-colors ${
+          wsConnected ? 'bg-green-500/20 text-green-500 border border-green-500/20' : 'bg-red-500/20 text-red-500 border border-red-500/20'
+        }`}>
+          {wsConnected ? 'WebSocket Connected' : 'WebSocket Disconnected'}
+        </div>
+      )}
+      
       {/* Mobile navbar - only visible on mobile */}
       <MobileNavbar />
       
@@ -111,21 +126,21 @@ const Index: React.FC = () => {
         <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2">
           <Button 
             size="icon" 
-            className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+            className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
             onClick={openMessagePopup}
           >
             <Mail className="h-4 w-4" />
           </Button>
           <Button 
             size="icon" 
-            className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+            className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
             onClick={openChatPopup}
           >
             <MessageCircle className="h-4 w-4" />
           </Button>
           <Button 
             size="icon" 
-            className="h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+            className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
             onClick={openSchedulePopup}
           >
             <Calendar className="h-4 w-4" />

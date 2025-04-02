@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, ArrowRight, Clock, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -7,6 +7,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import gsap from 'gsap';
 import { getVideos } from '@/lib/services/apiService';
 import { useQuery } from '@tanstack/react-query';
+import { useWebSocketEvent } from '@/lib/services/websocketService';
 
 const VideosHero: React.FC = () => {
   const [selectedVideo, setSelectedVideo] = useState<any | null>(null);
@@ -14,10 +15,16 @@ const VideosHero: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   
   // Fetch video data
-  const { data: videos, isLoading } = useQuery({
+  const { data: videos, isLoading, refetch } = useQuery({
     queryKey: ['videos'],
     queryFn: getVideos
   });
+  
+  // Listen for video updates via WebSocket
+  useWebSocketEvent('video_updated', useCallback(() => {
+    // Refetch videos when they're updated
+    refetch();
+  }, [refetch]));
   
   useEffect(() => {
     if (sectionRef.current) {

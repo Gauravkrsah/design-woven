@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +17,8 @@ import Contacts from "./pages/Contacts";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import { ThemeProvider } from '@/hooks/use-theme';
+import { initWebSocket, closeWebSocket } from './lib/services/websocketService';
+import { setQueryClientForAPI } from './lib/services/apiService';
 
 // Declare window object type to include our custom methods
 declare global {
@@ -29,6 +31,19 @@ declare global {
 const App: React.FC = () => {
   // Create a new QueryClient instance inside the component
   const [queryClient] = useState(() => new QueryClient());
+
+  useEffect(() => {
+    // Initialize API service with query client
+    setQueryClientForAPI(queryClient);
+    
+    // Initialize WebSocket
+    initWebSocket();
+    
+    // Clean up on unmount
+    return () => {
+      closeWebSocket();
+    };
+  }, [queryClient]);
 
   return (
     <ThemeProvider defaultTheme="dark">

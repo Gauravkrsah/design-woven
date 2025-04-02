@@ -1,11 +1,14 @@
-
 import { QueryClient } from '@tanstack/react-query';
+import { initWebSocket, sendMessage } from './websocketService';
 
 // Store the query client instance to use in mock API functions
-let queryClientInstance: QueryClient | null = null;
+let queryClient: QueryClient | null = null;
 
-export const setQueryClientForAPI = (queryClient: QueryClient) => {
-  queryClientInstance = queryClient;
+export const setQueryClientForAPI = (client: QueryClient) => {
+  queryClient = client;
+  
+  // Initialize WebSocket connection when API service is set up
+  initWebSocket();
 };
 
 // Mock data for projects
@@ -313,28 +316,34 @@ export const getOtherWorks = async () => {
 };
 
 // Mock API function to create a project
-export const createProject = async (projectData: any) => {
+export const createProject = async (project: Project): Promise<Project> => {
   // Wait for a short delay to simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
   
   const newProject = {
     id: String(mockProjects.length + 1),
-    ...projectData,
+    ...project,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
   
   mockProjects.push(newProject);
   
+  // After successful creation, invalidate queries and emit WebSocket event
+  if (queryClient) {
+    queryClient.invalidateQueries({ queryKey: ['projects'] });
+    sendMessage('project_updated', { action: 'create', project });
+  }
+  
   return newProject;
 };
 
 // Mock API function to update a project
-export const updateProject = async (id: string, projectData: any) => {
+export const updateProject = async (projectId: string, projectData: Partial<Project>): Promise<Project> => {
   // Wait for a short delay to simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
   
-  const index = mockProjects.findIndex(p => p.id === id);
+  const index = mockProjects.findIndex(p => p.id === projectId);
   
   if (index === -1) {
     throw new Error('Project not found');
@@ -348,15 +357,22 @@ export const updateProject = async (id: string, projectData: any) => {
   
   mockProjects[index] = updatedProject;
   
+  // After successful update, invalidate queries and emit WebSocket event
+  if (queryClient) {
+    queryClient.invalidateQueries({ queryKey: ['projects'] });
+    queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+    sendMessage('project_updated', { action: 'update', project: { id: projectId, ...projectData } });
+  }
+  
   return updatedProject;
 };
 
 // Mock API function to delete a project
-export const deleteProject = async (id: string) => {
+export const deleteProject = async (projectId: string): Promise<void> => {
   // Wait for a short delay to simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
   
-  const index = mockProjects.findIndex(p => p.id === id);
+  const index = mockProjects.findIndex(p => p.id === projectId);
   
   if (index === -1) {
     throw new Error('Project not found');
@@ -364,17 +380,21 @@ export const deleteProject = async (id: string) => {
   
   mockProjects.splice(index, 1);
   
-  return { success: true, message: 'Project deleted successfully' };
+  // After successful deletion, invalidate queries and emit WebSocket event
+  if (queryClient) {
+    queryClient.invalidateQueries({ queryKey: ['projects'] });
+    sendMessage('project_updated', { action: 'delete', projectId });
+  }
 };
 
 // Mock API function to create a blog post
-export const createBlogPost = async (blogData: any) => {
+export const createBlogPost = async (blogPost: BlogPost): Promise<BlogPost> => {
   // Wait for a short delay to simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
   
   const newBlog = {
     id: String(mockBlogPosts.length + 1),
-    ...blogData,
+    ...blogPost,
     likes: 0,
     comments: 0,
     readingTime: `${Math.floor(Math.random() * 10) + 3} min read`,
@@ -384,15 +404,20 @@ export const createBlogPost = async (blogData: any) => {
   
   mockBlogPosts.push(newBlog);
   
+  // After successful creation, invalidate queries and emit WebSocket event
+  if (queryClient) {
+    queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
+    sendMessage('blog_updated', { action: 'create', blogPost });
+  }
+  
   return newBlog;
 };
 
-// Mock API function to update a blog post
-export const updateBlogPost = async (id: string, blogData: any) => {
+export const updateBlogPost = async (blogPostId: string, blogPostData: Partial<BlogPost>): Promise<BlogPost> => {
   // Wait for a short delay to simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
   
-  const index = mockBlogPosts.findIndex(p => p.id === id);
+  const index = mockBlogPosts.findIndex(p => p.id === blogPostId);
   
   if (index === -1) {
     throw new Error('Blog post not found');
@@ -400,21 +425,27 @@ export const updateBlogPost = async (id: string, blogData: any) => {
   
   const updatedBlog = {
     ...mockBlogPosts[index],
-    ...blogData,
+    ...blogPostData,
     updatedAt: new Date().toISOString()
   };
   
   mockBlogPosts[index] = updatedBlog;
   
-  return updatedBlog;
+  // After successful update, invalidate queries and emit WebSocket event
+  if (queryClient) {
+    queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
+    queryClient.invalidateQueries({ queryKey: ['blogPost', blogPostId] });
+    sendMessage('blog_updated', { action: 'update', blogPost: { id: blogPostId, ...blogPostData } });
+  }
+  
+  return { id: blogPostId, ...blogPostData } as BlogPost;
 };
 
-// Mock API function to delete a blog post
-export const deleteBlogPost = async (id: string) => {
+export const deleteBlogPost = async (blogPostId: string): Promise<void> => {
   // Wait for a short delay to simulate API call
   await new Promise(resolve => setTimeout(resolve, 1000));
   
-  const index = mockBlogPosts.findIndex(p => p.id === id);
+  const index = mockBlogPosts.findIndex(p => p.id === blogPostId);
   
   if (index === -1) {
     throw new Error('Blog post not found');
@@ -422,7 +453,81 @@ export const deleteBlogPost = async (id: string) => {
   
   mockBlogPosts.splice(index, 1);
   
-  return { success: true, message: 'Blog post deleted successfully' };
+  // After successful deletion, invalidate queries and emit WebSocket event
+  if (queryClient) {
+    queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
+    sendMessage('blog_updated', { action: 'delete', blogPostId });
+  }
+};
+
+// Mock API function to create a video
+export const createVideo = async (video: Video): Promise<Video> => {
+  // Wait for a short delay to simulate API call
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  const newVideo = {
+    id: String(mockVideos.length + 1),
+    ...video,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  
+  mockVideos.push(newVideo);
+  
+  // After successful creation, invalidate queries and emit WebSocket event
+  if (queryClient) {
+    queryClient.invalidateQueries({ queryKey: ['videos'] });
+    sendMessage('video_updated', { action: 'create', video });
+  }
+  
+  return newVideo;
+};
+
+export const updateVideo = async (videoId: string, videoData: Partial<Video>): Promise<Video> => {
+  // Wait for a short delay to simulate API call
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  const index = mockVideos.findIndex(v => v.id === videoId);
+  
+  if (index === -1) {
+    throw new Error('Video not found');
+  }
+  
+  const updatedVideo = {
+    ...mockVideos[index],
+    ...videoData,
+    updatedAt: new Date().toISOString()
+  };
+  
+  mockVideos[index] = updatedVideo;
+  
+  // After successful update, invalidate queries and emit WebSocket event
+  if (queryClient) {
+    queryClient.invalidateQueries({ queryKey: ['videos'] });
+    queryClient.invalidateQueries({ queryKey: ['video', videoId] });
+    sendMessage('video_updated', { action: 'update', video: { id: videoId, ...videoData } });
+  }
+  
+  return { id: videoId, ...videoData } as Video;
+};
+
+export const deleteVideo = async (videoId: string): Promise<void> => {
+  // Wait for a short delay to simulate API call
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  const index = mockVideos.findIndex(v => v.id === videoId);
+  
+  if (index === -1) {
+    throw new Error('Video not found');
+  }
+  
+  mockVideos.splice(index, 1);
+  
+  // After successful deletion, invalidate queries and emit WebSocket event
+  if (queryClient) {
+    queryClient.invalidateQueries({ queryKey: ['videos'] });
+    sendMessage('video_updated', { action: 'delete', videoId });
+  }
 };
 
 // Mock API function to mark a message as read
