@@ -1,3 +1,4 @@
+
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { 
@@ -57,7 +58,7 @@ export const getProjects = async () => {
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...convertTimestamps(doc.data())
-    })) as Project[];
+    })) as unknown as Project[];
   } catch (error) {
     console.error("Error getting projects:", error);
     return [];
@@ -76,7 +77,7 @@ export const getFeaturedProjects = async () => {
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...convertTimestamps(doc.data())
-    })) as Project[];
+    })) as unknown as Project[];
   } catch (error) {
     console.error("Error getting featured projects:", error);
     return [];
@@ -92,7 +93,7 @@ export const getProjectById = async (id: string) => {
       return {
         id: docSnap.id,
         ...convertTimestamps(docSnap.data())
-      } as Project;
+      } as unknown as Project;
     } else {
       return null;
     }
@@ -114,7 +115,7 @@ export const createProject = async (project: Omit<Project, 'id' | 'createdAt' | 
     return {
       id: docRef.id,
       ...convertTimestamps(newProject.data() || {})
-    } as Project;
+    } as unknown as Project;
   } catch (error) {
     console.error("Error creating project:", error);
     throw error;
@@ -133,7 +134,7 @@ export const updateProject = async (id: string, project: Partial<Project>) => {
     return {
       id,
       ...convertTimestamps(updatedDoc.data() || {})
-    } as Project;
+    } as unknown as Project;
   } catch (error) {
     console.error("Error updating project:", error);
     throw error;
@@ -161,7 +162,7 @@ export const getBlogPosts = async () => {
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...convertTimestamps(doc.data())
-    })) as BlogPost[];
+    })) as unknown as BlogPost[];
   } catch (error) {
     console.error("Error getting blog posts:", error);
     return [];
@@ -180,7 +181,7 @@ export const getFeaturedBlogPosts = async () => {
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...convertTimestamps(doc.data())
-    })) as BlogPost[];
+    })) as unknown as BlogPost[];
   } catch (error) {
     console.error("Error getting featured blog posts:", error);
     return [];
@@ -196,7 +197,7 @@ export const getBlogPostById = async (id: string) => {
       return {
         id: docSnap.id,
         ...convertTimestamps(docSnap.data())
-      } as BlogPost;
+      } as unknown as BlogPost;
     } else {
       return null;
     }
@@ -218,7 +219,7 @@ export const createBlogPost = async (blogPost: Omit<BlogPost, 'id' | 'createdAt'
     return {
       id: docRef.id,
       ...convertTimestamps(newBlogPost.data() || {})
-    } as BlogPost;
+    } as unknown as BlogPost;
   } catch (error) {
     console.error("Error creating blog post:", error);
     throw error;
@@ -237,7 +238,7 @@ export const updateBlogPost = async (id: string, blogPost: Partial<BlogPost>) =>
     return {
       id,
       ...convertTimestamps(updatedDoc.data() || {})
-    } as BlogPost;
+    } as unknown as BlogPost;
   } catch (error) {
     console.error("Error updating blog post:", error);
     throw error;
@@ -265,7 +266,7 @@ export const getOtherWorks = async () => {
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...convertTimestamps(doc.data())
-    })) as OtherWork[];
+    })) as unknown as OtherWork[];
   } catch (error) {
     console.error("Error getting other works:", error);
     return [];
@@ -284,7 +285,7 @@ export const getFeaturedOtherWorks = async () => {
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...convertTimestamps(doc.data())
-    })) as OtherWork[];
+    })) as unknown as OtherWork[];
   } catch (error) {
     console.error("Error getting featured other works:", error);
     return [];
@@ -300,7 +301,7 @@ export const getOtherWorkById = async (id: string) => {
       return {
         id: docSnap.id,
         ...convertTimestamps(docSnap.data())
-      } as OtherWork;
+      } as unknown as OtherWork;
     } else {
       return null;
     }
@@ -322,7 +323,7 @@ export const createOtherWork = async (work: Omit<OtherWork, 'id' | 'createdAt' |
     return {
       id: docRef.id,
       ...convertTimestamps(newWork.data() || {})
-    } as OtherWork;
+    } as unknown as OtherWork;
   } catch (error) {
     console.error("Error creating other work:", error);
     throw error;
@@ -341,7 +342,7 @@ export const updateOtherWork = async (id: string, work: Partial<OtherWork>) => {
     return {
       id,
       ...convertTimestamps(updatedDoc.data() || {})
-    } as OtherWork;
+    } as unknown as OtherWork;
   } catch (error) {
     console.error("Error updating other work:", error);
     throw error;
@@ -369,7 +370,7 @@ export const getContents = async () => {
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...convertTimestamps(doc.data())
-    })) as Content[];
+    })) as unknown as Content[];
   } catch (error) {
     console.error("Error getting contents:", error);
     return [];
@@ -387,7 +388,7 @@ export const getVideos = async () => {
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...convertTimestamps(doc.data())
-    })) as Video[];
+    })) as unknown as Video[];
   } catch (error) {
     console.error("Error getting videos:", error);
     return [];
@@ -407,7 +408,7 @@ export const getFeaturedVideos = async () => {
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...convertTimestamps(doc.data())
-    })) as Video[];
+    })) as unknown as Video[];
   } catch (error) {
     console.error("Error getting featured videos:", error);
     return [];
@@ -423,7 +424,7 @@ export const getContentById = async (id: string) => {
       return {
         id: docSnap.id,
         ...convertTimestamps(docSnap.data())
-      } as Content;
+      } as unknown as Content;
     } else {
       return null;
     }
@@ -445,7 +446,7 @@ export const createContent = async (content: Omit<Content, 'id' | 'createdAt' | 
     return {
       id: docRef.id,
       ...convertTimestamps(newContent.data() || {})
-    } as Content;
+    } as unknown as Content;
   } catch (error) {
     console.error("Error creating content:", error);
     throw error;
@@ -464,7 +465,7 @@ export const updateContent = async (id: string, content: Partial<Content>) => {
     return {
       id,
       ...convertTimestamps(updatedDoc.data() || {})
-    } as Content;
+    } as unknown as Content;
   } catch (error) {
     console.error("Error updating content:", error);
     throw error;
