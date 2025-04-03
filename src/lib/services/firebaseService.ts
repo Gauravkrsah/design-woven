@@ -1,4 +1,3 @@
-
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { 
@@ -16,7 +15,8 @@ import {
   limit,
   DocumentData,
   Timestamp,
-  serverTimestamp
+  serverTimestamp,
+  writeBatch
 } from "firebase/firestore";
 import { BlogPost, Content, OtherWork, Project, Video } from "../models";
 
@@ -45,6 +45,40 @@ const convertTimestamps = (doc: DocumentData) => {
     }
   });
   return data;
+};
+
+// Clear demo data for fresh start
+export const clearAllDemoData = async () => {
+  try {
+    await clearCollection("projects");
+    await clearCollection("blogPosts");
+    await clearCollection("otherWorks");
+    await clearCollection("contents");
+    return true;
+  } catch (error) {
+    console.error("Error clearing demo data:", error);
+    throw error;
+  }
+};
+
+// Helper to clear a collection
+const clearCollection = async (collectionName: string) => {
+  try {
+    const collectionRef = collection(db, collectionName);
+    const snapshot = await getDocs(collectionRef);
+    
+    const batch = writeBatch(db);
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    
+    await batch.commit();
+    console.log(`Collection ${collectionName} cleared successfully`);
+    return true;
+  } catch (error) {
+    console.error(`Error clearing collection ${collectionName}:`, error);
+    throw error;
+  }
 };
 
 // Projects collection
@@ -105,11 +139,15 @@ export const getProjectById = async (id: string) => {
 
 export const createProject = async (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => {
   try {
-    const docRef = await addDoc(collection(db, "projects"), {
+    const projectData = {
       ...project,
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    });
+      updatedAt: serverTimestamp(),
+      featured: project.featured || false,
+      status: project.status || 'Draft'
+    };
+    
+    const docRef = await addDoc(collection(db, "projects"), projectData);
     
     const newProject = await getDoc(docRef);
     return {
@@ -118,7 +156,7 @@ export const createProject = async (project: Omit<Project, 'id' | 'createdAt' | 
     } as unknown as Project;
   } catch (error) {
     console.error("Error creating project:", error);
-    throw error;
+    throw new Error(`Failed to create project: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 };
 
@@ -209,11 +247,15 @@ export const getBlogPostById = async (id: string) => {
 
 export const createBlogPost = async (blogPost: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>) => {
   try {
-    const docRef = await addDoc(collection(db, "blogPosts"), {
+    const blogPostData = {
       ...blogPost,
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    });
+      updatedAt: serverTimestamp(),
+      featured: blogPost.featured || false,
+      status: blogPost.status || 'Draft'
+    };
+    
+    const docRef = await addDoc(collection(db, "blogPosts"), blogPostData);
     
     const newBlogPost = await getDoc(docRef);
     return {
@@ -222,7 +264,7 @@ export const createBlogPost = async (blogPost: Omit<BlogPost, 'id' | 'createdAt'
     } as unknown as BlogPost;
   } catch (error) {
     console.error("Error creating blog post:", error);
-    throw error;
+    throw new Error(`Failed to create blog post: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 };
 
@@ -313,11 +355,15 @@ export const getOtherWorkById = async (id: string) => {
 
 export const createOtherWork = async (work: Omit<OtherWork, 'id' | 'createdAt' | 'updatedAt'>) => {
   try {
-    const docRef = await addDoc(collection(db, "otherWorks"), {
+    const workData = {
       ...work,
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    });
+      updatedAt: serverTimestamp(),
+      featured: work.featured || false,
+      status: work.status || 'Draft'
+    };
+    
+    const docRef = await addDoc(collection(db, "otherWorks"), workData);
     
     const newWork = await getDoc(docRef);
     return {
@@ -326,7 +372,7 @@ export const createOtherWork = async (work: Omit<OtherWork, 'id' | 'createdAt' |
     } as unknown as OtherWork;
   } catch (error) {
     console.error("Error creating other work:", error);
-    throw error;
+    throw new Error(`Failed to create other work: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 };
 
@@ -436,11 +482,20 @@ export const getContentById = async (id: string) => {
 
 export const createContent = async (content: Omit<Content, 'id' | 'createdAt' | 'updatedAt'>) => {
   try {
-    const docRef = await addDoc(collection(db, "contents"), {
+    const contentData = {
       ...content,
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    });
+      updatedAt: serverTimestamp(),
+      featured: content.featured || false,
+      status: content.status || 'Draft',
+      isVideo: content.isVideo || false,
+      likes: content.likes || 0,
+      comments: content.comments || 0,
+      shares: content.shares || 0,
+      views: content.views || 0
+    };
+    
+    const docRef = await addDoc(collection(db, "contents"), contentData);
     
     const newContent = await getDoc(docRef);
     return {
@@ -449,7 +504,7 @@ export const createContent = async (content: Omit<Content, 'id' | 'createdAt' | 
     } as unknown as Content;
   } catch (error) {
     console.error("Error creating content:", error);
-    throw error;
+    throw new Error(`Failed to create content: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 };
 

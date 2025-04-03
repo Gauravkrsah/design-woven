@@ -5,13 +5,27 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription
+} from '@/components/ui/form';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter 
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2 } from 'lucide-react';
+import { Loader2, User, Clock, Image, Tag, FileText } from 'lucide-react';
 import { createBlogPost, updateBlogPost } from '@/lib/services/firebaseService';
 
 const formSchema = z.object({
@@ -37,7 +51,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<BlogPostFormValues>({
+  const form = useForm<BlogPostFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
@@ -53,32 +67,36 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
   
   React.useEffect(() => {
     if (editBlogPost) {
-      setValue('title', editBlogPost.title);
-      setValue('content', editBlogPost.content || '');
-      setValue('imageUrl', editBlogPost.imageUrl);
-      setValue('excerpt', editBlogPost.excerpt);
-      setValue('category', editBlogPost.category || '');
-      setValue('tags', editBlogPost.tags.join ? editBlogPost.tags.join(', ') : editBlogPost.tags);
-      setValue('status', editBlogPost.status);
-      setValue('authorName', editBlogPost.authorName || editBlogPost.author || 'Gaurav Kr Sah');
+      form.setValue('title', editBlogPost.title);
+      form.setValue('content', editBlogPost.content || '');
+      form.setValue('imageUrl', editBlogPost.imageUrl);
+      form.setValue('excerpt', editBlogPost.excerpt);
+      form.setValue('category', editBlogPost.category || '');
+      form.setValue('tags', editBlogPost.tags.join ? editBlogPost.tags.join(', ') : editBlogPost.tags);
+      form.setValue('status', editBlogPost.status);
+      form.setValue('authorName', editBlogPost.authorName || editBlogPost.author || 'Gaurav Kr Sah');
     } else {
-      reset();
+      form.reset();
     }
-  }, [editBlogPost, setValue, reset]);
+  }, [editBlogPost, form]);
   
   const createMutation = useMutation({
     mutationFn: (data: BlogPostFormValues) => {
+      // Calculate approximate reading time based on content length
+      const wordCount = data.content.trim().split(/\s+/).length;
+      const readTime = Math.max(1, Math.ceil(wordCount / 200)); // Assume 200 words per minute reading speed
+      
       // Convert tags from comma-separated string to array
       const formattedData = {
-        title: data.title, // Ensure title is provided (not optional)
+        title: data.title,
         content: data.content,
         imageUrl: data.imageUrl,
         excerpt: data.excerpt,
         category: data.category,
         tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
         author: data.authorName,
-        readTime: `${Math.floor(Math.random() * 10) + 3} min read`,
-        readingTime: `${Math.floor(Math.random() * 10) + 3} min read`, // For consistency with other components
+        readTime: `${readTime} min read`,
+        readingTime: `${readTime} min read`, // For consistency with other components
         featured: false,
         status: data.status
       };
@@ -93,7 +111,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
       queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
       queryClient.invalidateQueries({ queryKey: ['featuredBlogPosts'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
-      reset();
+      form.reset();
       onOpenChange(false);
     },
     onError: (error) => {
@@ -107,17 +125,21 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
   
   const updateMutation = useMutation({
     mutationFn: (data: BlogPostFormValues) => {
+      // Calculate approximate reading time based on content length
+      const wordCount = data.content.trim().split(/\s+/).length;
+      const readTime = Math.max(1, Math.ceil(wordCount / 200)); // Assume 200 words per minute reading speed
+      
       // Convert tags from comma-separated string to array
       const formattedData = {
-        title: data.title, // Ensure title is provided (not optional)
+        title: data.title,
         content: data.content,
         imageUrl: data.imageUrl,
         excerpt: data.excerpt,
         category: data.category,
         tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
         author: data.authorName,
-        readTime: editBlogPost.readTime,
-        readingTime: editBlogPost.readingTime || editBlogPost.readTime, // For consistency
+        readTime: `${readTime} min read`,
+        readingTime: `${readTime} min read`, // For consistency
         status: data.status
       };
       
@@ -132,7 +154,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
       queryClient.invalidateQueries({ queryKey: ['featuredBlogPosts'] });
       queryClient.invalidateQueries({ queryKey: ['blogPost', editBlogPost.id] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
-      reset();
+      form.reset();
       onOpenChange(false);
     },
     onError: (error) => {
@@ -156,87 +178,196 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{editBlogPost ? 'Edit Blog Post' : 'Add New Blog Post'}</DialogTitle>
+          <DialogTitle className="text-xl font-bold">{editBlogPost ? 'Edit Blog Post' : 'Add New Blog Post'}</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
-          <div className="grid grid-cols-1 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" {...register('title')} />
-              {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="imageUrl">Featured Image URL</Label>
-                <Input id="imageUrl" {...register('imageUrl')} />
-                {errors.imageUrl && <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+            <div className="grid grid-cols-1 gap-4">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Blog Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter blog title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Featured Image URL</FormLabel>
+                      <FormControl>
+                        <div className="flex relative">
+                          <Image className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-8" placeholder="Enter image URL" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="authorName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Author</FormLabel>
+                      <FormControl>
+                        <div className="flex relative">
+                          <User className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-8" placeholder="Author name" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="authorName">Author Name</Label>
-                <Input id="authorName" {...register('authorName')} />
-                {errors.authorName && <p className="text-red-500 text-sm">{errors.authorName.message}</p>}
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="excerpt">Excerpt</Label>
-              <Textarea id="excerpt" rows={2} {...register('excerpt')} />
-              {errors.excerpt && <p className="text-red-500 text-sm">{errors.excerpt.message}</p>}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="content">Content</Label>
-              <Textarea id="content" rows={10} {...register('content')} />
-              {errors.content && <p className="text-red-500 text-sm">{errors.content.message}</p>}
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Input id="category" {...register('category')} />
-                {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
+              <FormField
+                control={form.control}
+                name="excerpt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Excerpt</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Brief summary of your blog post" 
+                        className="min-h-[80px]"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      A short summary that will appear in blog listings
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Content</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <FileText className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Textarea 
+                          className="min-h-[250px] pl-8" 
+                          placeholder="Write your blog post content here..."
+                          {...field} 
+                        />
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Supports basic markdown formatting
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Technology">Technology</SelectItem>
+                          <SelectItem value="Programming">Programming</SelectItem>
+                          <SelectItem value="Design">Design</SelectItem>
+                          <SelectItem value="Career">Career</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Draft">Draft</SelectItem>
+                          <SelectItem value="Published">Published</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select
-                  onValueChange={(value) => setValue('status', value as 'Draft' | 'Published')}
-                  defaultValue={editBlogPost ? editBlogPost.status : 'Draft'}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Draft">Draft</SelectItem>
-                    <SelectItem value="Published">Published</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.status && <p className="text-red-500 text-sm">{errors.status.message}</p>}
-              </div>
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <FormControl>
+                      <div className="flex relative">
+                        <Tag className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input className="pl-8" placeholder="React, Web Development, Tutorial" {...field} />
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Separate tags with commas
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="tags">Tags (comma-separated)</Label>
-              <Input id="tags" {...register('tags')} />
-              {errors.tags && <p className="text-red-500 text-sm">{errors.tags.message}</p>}
-            </div>
-          </div>
-          
-          <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {editBlogPost ? 'Update Blog Post' : 'Create Blog Post'}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="mt-6 gap-2">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="gap-1">
+                {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                {editBlogPost ? 'Update Blog Post' : 'Create Blog Post'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

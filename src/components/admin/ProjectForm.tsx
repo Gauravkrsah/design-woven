@@ -5,13 +5,27 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription
+} from '@/components/ui/form';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter 
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Link as LinkIcon, Github, ExternalLink, Tag } from 'lucide-react';
 import { createProject, updateProject } from '@/lib/services/firebaseService';
 
 const formSchema = z.object({
@@ -38,7 +52,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<ProjectFormValues>({
+  const form = useForm<ProjectFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
@@ -55,25 +69,25 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
   
   React.useEffect(() => {
     if (editProject) {
-      setValue('title', editProject.title);
-      setValue('description', editProject.description);
-      setValue('imageUrl', editProject.imageUrl);
-      setValue('link', editProject.link || '#');
-      setValue('githubLink', editProject.githubLink || '');
-      setValue('liveDemo', editProject.liveDemo || '');
-      setValue('category', editProject.category);
-      setValue('tags', editProject.tags.join ? editProject.tags.join(', ') : editProject.tags);
-      setValue('status', editProject.status);
+      form.setValue('title', editProject.title);
+      form.setValue('description', editProject.description);
+      form.setValue('imageUrl', editProject.imageUrl);
+      form.setValue('link', editProject.link || '#');
+      form.setValue('githubLink', editProject.githubLink || '');
+      form.setValue('liveDemo', editProject.liveDemo || '');
+      form.setValue('category', editProject.category);
+      form.setValue('tags', editProject.tags.join ? editProject.tags.join(', ') : editProject.tags);
+      form.setValue('status', editProject.status);
     } else {
-      reset();
+      form.reset();
     }
-  }, [editProject, setValue, reset]);
+  }, [editProject, form]);
   
   const createMutation = useMutation({
     mutationFn: (data: ProjectFormValues) => {
       // Convert tags from comma-separated string to array
       const formattedData = {
-        title: data.title, // Ensure title is provided (not optional)
+        title: data.title,
         description: data.description,
         imageUrl: data.imageUrl,
         link: data.link,
@@ -95,7 +109,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['featuredProjects'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
-      reset();
+      form.reset();
       onOpenChange(false);
     },
     onError: (error) => {
@@ -111,7 +125,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
     mutationFn: (data: ProjectFormValues) => {
       // Convert tags from comma-separated string to array
       const formattedData = {
-        title: data.title, // Ensure title is provided (not optional)
+        title: data.title,
         description: data.description,
         imageUrl: data.imageUrl,
         link: data.link,
@@ -133,7 +147,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
       queryClient.invalidateQueries({ queryKey: ['featuredProjects'] });
       queryClient.invalidateQueries({ queryKey: ['project', editProject.id] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
-      reset();
+      form.reset();
       onOpenChange(false);
     },
     onError: (error) => {
@@ -157,93 +171,207 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{editProject ? 'Edit Project' : 'Add New Project'}</DialogTitle>
+          <DialogTitle className="text-xl font-bold">{editProject ? 'Edit Project' : 'Add New Project'}</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
-          <div className="grid grid-cols-1 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" {...register('title')} />
-              {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" rows={5} {...register('description')} />
-              {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="imageUrl">Image URL</Label>
-              <Input id="imageUrl" {...register('imageUrl')} />
-              {errors.imageUrl && <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="link">Project Link</Label>
-              <Input id="link" {...register('link')} />
-              {errors.link && <p className="text-red-500 text-sm">{errors.link.message}</p>}
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="githubLink">GitHub URL (Optional)</Label>
-                <Input id="githubLink" {...register('githubLink')} />
-                {errors.githubLink && <p className="text-red-500 text-sm">{errors.githubLink.message}</p>}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+            <div className="grid grid-cols-1 gap-4">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter project title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Describe your project" 
+                        className="min-h-[100px]"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Image URL</FormLabel>
+                    <FormControl>
+                      <div className="flex">
+                        <Input placeholder="https://example.com/image.jpg" {...field} />
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Enter a direct URL to an image for this project
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="link"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Project Link</FormLabel>
+                      <FormControl>
+                        <div className="flex relative">
+                          <LinkIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-8" placeholder="Project URL" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Web Development">Web Development</SelectItem>
+                          <SelectItem value="Mobile Apps">Mobile Apps</SelectItem>
+                          <SelectItem value="UI/UX Design">UI/UX Design</SelectItem>
+                          <SelectItem value="AI/ML Projects">AI/ML Projects</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="liveDemo">Live Demo URL (Optional)</Label>
-                <Input id="liveDemo" {...register('liveDemo')} />
-                {errors.liveDemo && <p className="text-red-500 text-sm">{errors.liveDemo.message}</p>}
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Input id="category" {...register('category')} />
-                {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="githubLink"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>GitHub Repository</FormLabel>
+                      <FormControl>
+                        <div className="flex relative">
+                          <Github className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-8" placeholder="GitHub URL (optional)" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="liveDemo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Live Demo URL</FormLabel>
+                      <FormControl>
+                        <div className="flex relative">
+                          <ExternalLink className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-8" placeholder="Demo URL (optional)" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select
-                  onValueChange={(value) => setValue('status', value as 'Draft' | 'Published')}
-                  defaultValue={editProject ? editProject.status : 'Draft'}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Draft">Draft</SelectItem>
-                    <SelectItem value="Published">Published</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.status && <p className="text-red-500 text-sm">{errors.status.message}</p>}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tags</FormLabel>
+                      <FormControl>
+                        <div className="flex relative">
+                          <Tag className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-8" placeholder="React, TypeScript, Firebase" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormDescription>
+                        Separate tags with commas
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Draft">Draft</SelectItem>
+                          <SelectItem value="Published">Published</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="tags">Tags (comma-separated)</Label>
-              <Input id="tags" {...register('tags')} />
-              {errors.tags && <p className="text-red-500 text-sm">{errors.tags.message}</p>}
-            </div>
-          </div>
-          
-          <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {editProject ? 'Update Project' : 'Create Project'}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="mt-6 gap-2">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="gap-1">
+                {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                {editProject ? 'Update Project' : 'Create Project'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

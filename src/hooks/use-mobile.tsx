@@ -1,16 +1,24 @@
 
 import * as React from "react"
 
-const MOBILE_BREAKPOINT = 768
+// Different breakpoints for more precise responsive designs
+export const BREAKPOINTS = {
+  xs: 480,
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  '2xl': 1536
+}
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean>(
-    typeof window !== 'undefined' ? window.innerWidth < MOBILE_BREAKPOINT : false
+    typeof window !== 'undefined' ? window.innerWidth < BREAKPOINTS.md : false
   )
 
   React.useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+      setIsMobile(window.innerWidth < BREAKPOINTS.md)
     }
     
     // Initial check
@@ -24,4 +32,27 @@ export function useIsMobile() {
   }, [])
 
   return isMobile
+}
+
+export function useBreakpoint(breakpoint: keyof typeof BREAKPOINTS) {
+  const [isBelow, setIsBelow] = React.useState<boolean>(
+    typeof window !== 'undefined' ? window.innerWidth < BREAKPOINTS[breakpoint] : false
+  )
+
+  React.useEffect(() => {
+    const checkBreakpoint = () => {
+      setIsBelow(window.innerWidth < BREAKPOINTS[breakpoint])
+    }
+    
+    // Initial check
+    checkBreakpoint()
+    
+    // Add event listener
+    window.addEventListener('resize', checkBreakpoint)
+    
+    // Clean up
+    return () => window.removeEventListener('resize', checkBreakpoint)
+  }, [breakpoint])
+
+  return isBelow
 }
