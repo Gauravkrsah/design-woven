@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HeroSection from '@/components/sections/HeroSection';
@@ -24,11 +25,7 @@ const MainContent: React.FC = () => {
           setTimeout(connectWebSocket, 3000);
         } else {
           console.log("WebSocket connected successfully");
-          toast({
-            title: "Connected",
-            description: "Real-time updates enabled",
-            duration: 3000,
-          });
+          // No toast for successful connection to avoid distraction
         }
       }
     };
@@ -48,12 +45,12 @@ const MainContent: React.FC = () => {
     return () => {
       clearInterval(pingInterval);
     };
-  }, [wsConnected, toast]);
+  }, [wsConnected]);
 
   return (
     <main className="flex-1 relative">
       <ScrollArea className="h-screen">
-        <div className="px-6 md:px-12 lg:px-16">
+        <div className="px-8 md:px-12 lg:px-16">
           <HeroSection />
           <Videos />
           <SkillsSection />

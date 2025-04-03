@@ -11,10 +11,11 @@ import SchedulePopup from '@/components/ui/SchedulePopup';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Mail, Calendar } from 'lucide-react';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setQueryClientForAPI } from '@/lib/services/apiService';
 import { useWebSocketStatus, initWebSocket } from '@/lib/services/websocketService';
 import { toast } from '@/components/ui/use-toast';
+import { initializeDatabase } from '@/lib/services/firebaseService';
 
 // Global popup states are managed through window object
 // Each page can trigger these popups
@@ -26,6 +27,17 @@ declare global {
     openSchedulePopup?: () => void;
   }
 }
+
+// Create a QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const Index: React.FC = () => {
   const [isSubscribeOpen, setIsSubscribeOpen] = useState(false);
@@ -40,8 +52,16 @@ const Index: React.FC = () => {
     document.title = "Portfolio | Full Stack Developer & AI Enthusiast";
     
     // Initialize query client for API service
-    const queryClient = new QueryClient();
     setQueryClientForAPI(queryClient);
+    
+    // Initialize Firebase database
+    initializeDatabase().then(success => {
+      if (success) {
+        console.log("Firebase database initialized successfully");
+      } else {
+        console.error("Failed to initialize Firebase database");
+      }
+    });
     
     // Initialize WebSocket connection with retry mechanism
     const connectWebSocket = () => {
@@ -49,11 +69,6 @@ const Index: React.FC = () => {
       if (!success) {
         console.log("WebSocket connection failed, retrying...");
         setTimeout(connectWebSocket, 3000);
-      } else {
-        toast({
-          title: "Connected",
-          description: "Real-time updates are now enabled",
-        });
       }
     };
     
@@ -107,82 +122,75 @@ const Index: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      {/* WebSocket connection indicator (visible only in development) */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className={`fixed top-2 right-2 z-50 px-3 py-1.5 text-xs rounded-full transition-colors ${
-          wsConnected ? 'bg-green-500/20 text-green-500 border border-green-500/30' : 'bg-red-500/20 text-red-500 border border-red-500/30'
-        }`}>
-          {wsConnected ? 'WebSocket Connected' : 'WebSocket Disconnected'}
-        </div>
-      )}
-      
-      {/* Mobile navbar - only visible on mobile */}
-      <MobileNavbar />
-      
-      <div className="flex flex-1 pt-[60px] lg:pt-0">
-        {/* Left sidebar - hidden on mobile */}
-        <div className="hidden lg:block sticky top-0 h-screen">
-          <LeftSidebar />
+    <QueryClientProvider client={queryClient}>
+      <div className="flex flex-col min-h-screen bg-background text-foreground">
+        {/* Mobile navbar - only visible on mobile */}
+        <MobileNavbar />
+        
+        <div className="flex flex-1 pt-[60px] lg:pt-0">
+          {/* Left sidebar - hidden on mobile */}
+          <div className="hidden lg:block sticky top-0 h-screen">
+            <LeftSidebar />
+          </div>
+          
+          {/* Main content - always visible */}
+          <MainContent />
+          
+          {/* Right sidebar - hidden on mobile */}
+          <div className="hidden lg:block sticky top-0 h-screen">
+            <RightSidebar />
+          </div>
         </div>
         
-        {/* Main content - always visible */}
-        <MainContent />
+        {/* Mobile floating action buttons */}
+        {isMobile && (
+          <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2">
+            <Button 
+              size="icon" 
+              className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+              onClick={openMessagePopup}
+            >
+              <Mail className="h-4 w-4" />
+            </Button>
+            <Button 
+              size="icon" 
+              className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+              onClick={openChatPopup}
+            >
+              <MessageCircle className="h-4 w-4" />
+            </Button>
+            <Button 
+              size="icon" 
+              className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+              onClick={openSchedulePopup}
+            >
+              <Calendar className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
         
-        {/* Right sidebar - hidden on mobile */}
-        <div className="hidden lg:block sticky top-0 h-screen">
-          <RightSidebar />
-        </div>
-      </div>
-      
-      {/* Mobile floating action buttons */}
-      {isMobile && (
-        <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2">
-          <Button 
-            size="icon" 
-            className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-            onClick={openMessagePopup}
-          >
-            <Mail className="h-4 w-4" />
-          </Button>
-          <Button 
-            size="icon" 
-            className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-            onClick={openChatPopup}
-          >
-            <MessageCircle className="h-4 w-4" />
-          </Button>
-          <Button 
-            size="icon" 
-            className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-            onClick={openSchedulePopup}
-          >
-            <Calendar className="h-4 w-4" />
-          </Button>
-        </div>
-      )}
-      
-      {/* Popups */}
-      <SubscribePopup 
-        open={isSubscribeOpen} 
-        onOpenChange={setIsSubscribeOpen} 
-      />
-      
-      <MessagePopup 
-        open={isMessageOpen} 
-        onOpenChange={setIsMessageOpen} 
-      />
-      
-      <ChatPopup 
-        open={isChatOpen} 
-        onOpenChange={setIsChatOpen} 
-      />
+        {/* Popups */}
+        <SubscribePopup 
+          open={isSubscribeOpen} 
+          onOpenChange={setIsSubscribeOpen} 
+        />
+        
+        <MessagePopup 
+          open={isMessageOpen} 
+          onOpenChange={setIsMessageOpen} 
+        />
+        
+        <ChatPopup 
+          open={isChatOpen} 
+          onOpenChange={setIsChatOpen} 
+        />
 
-      <SchedulePopup
-        open={isScheduleOpen}
-        onOpenChange={setIsScheduleOpen}
-      />
-    </div>
+        <SchedulePopup
+          open={isScheduleOpen}
+          onOpenChange={setIsScheduleOpen}
+        />
+      </div>
+    </QueryClientProvider>
   );
 };
 

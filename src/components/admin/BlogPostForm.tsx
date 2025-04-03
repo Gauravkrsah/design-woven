@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { createBlogPost, updateBlogPost } from '@/lib/services/apiService';
 import { Loader2 } from 'lucide-react';
+import { createBlogPost, updateBlogPost } from '@/lib/services/firebaseService';
 
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -58,7 +58,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
       setValue('imageUrl', editBlogPost.imageUrl);
       setValue('excerpt', editBlogPost.excerpt);
       setValue('category', editBlogPost.category || '');
-      setValue('tags', editBlogPost.tags.join(', '));
+      setValue('tags', editBlogPost.tags.join ? editBlogPost.tags.join(', ') : editBlogPost.tags);
       setValue('status', editBlogPost.status);
       setValue('authorName', editBlogPost.authorName || editBlogPost.author || 'Gaurav Kr Sah');
     } else {
@@ -78,6 +78,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
         tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
         author: data.authorName,
         readTime: `${Math.floor(Math.random() * 10) + 3} min read`,
+        readingTime: `${Math.floor(Math.random() * 10) + 3} min read`, // For consistency with other components
         featured: false,
         status: data.status
       };
@@ -90,6 +91,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
         description: 'The blog post has been successfully created.',
       });
       queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['featuredBlogPosts'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       reset();
       onOpenChange(false);
@@ -115,6 +117,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
         tags: data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
         author: data.authorName,
         readTime: editBlogPost.readTime,
+        readingTime: editBlogPost.readingTime || editBlogPost.readTime, // For consistency
         status: data.status
       };
       
@@ -126,6 +129,8 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ open, onOpenChange, editBlo
         description: 'The blog post has been successfully updated.',
       });
       queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['featuredBlogPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['blogPost', editBlogPost.id] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       reset();
       onOpenChange(false);

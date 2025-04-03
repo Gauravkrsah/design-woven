@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getProjectById } from '@/lib/services/apiService';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -14,6 +13,7 @@ import LeftSidebar from '@/components/layout/LeftSidebar';
 import RightSidebar from '@/components/layout/RightSidebar';
 import MobileNavbar from '@/components/layout/MobileNavbar';
 import { cn } from '@/lib/utils';
+import { getProjectById } from '@/lib/services/firebaseService';
 
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +21,7 @@ const ProjectDetail: React.FC = () => {
   
   const { data: project, isLoading, error } = useQuery({
     queryKey: ['project', id],
-    queryFn: () => getProjectById(Number(id)),
+    queryFn: () => getProjectById(id as string),
     enabled: !!id,
   });
   
@@ -93,7 +93,7 @@ const ProjectDetail: React.FC = () => {
             <h1 className="text-3xl md:text-4xl font-bold">{project.title}</h1>
             
             <div className="flex flex-wrap gap-2">
-              {project.tags.map((tag, index) => (
+              {project.tags.map((tag: string, index: number) => (
                 <Badge key={index} variant="outline" className="text-sm bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500/20">
                   {tag}
                 </Badge>
@@ -126,6 +126,9 @@ const ProjectDetail: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
             {project.description}
           </p>
+          {project.content && (
+            <div className="mt-4 prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: project.content }}></div>
+          )}
         </div>
         
         <div className="flex flex-wrap gap-4">

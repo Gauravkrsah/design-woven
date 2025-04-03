@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { createProject, updateProject } from '@/lib/services/apiService';
 import { Loader2 } from 'lucide-react';
+import { createProject, updateProject } from '@/lib/services/firebaseService';
 
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -62,7 +62,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
       setValue('githubLink', editProject.githubLink || '');
       setValue('liveDemo', editProject.liveDemo || '');
       setValue('category', editProject.category);
-      setValue('tags', editProject.tags.join(', '));
+      setValue('tags', editProject.tags.join ? editProject.tags.join(', ') : editProject.tags);
       setValue('status', editProject.status);
     } else {
       reset();
@@ -93,6 +93,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
         description: 'The project has been successfully created.',
       });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['featuredProjects'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       reset();
       onOpenChange(false);
@@ -129,6 +130,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ open, onOpenChange, editProje
         description: 'The project has been successfully updated.',
       });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['featuredProjects'] });
+      queryClient.invalidateQueries({ queryKey: ['project', editProject.id] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       reset();
       onOpenChange(false);
