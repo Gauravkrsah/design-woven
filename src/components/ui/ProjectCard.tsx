@@ -23,6 +23,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   className,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  
+  // Extract project ID from link for direct navigation
+  const projectId = link.split('/').pop();
 
   return (
     <motion.div 
@@ -41,7 +44,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     >
       <div className="aspect-[16/10] w-full overflow-hidden">
         <img
-          src={imageUrl}
+          src={imageUrl || 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&w=800&q=80'}
           alt={title}
           className={cn(
             "h-full w-full object-cover transition-transform duration-500",
@@ -52,9 +55,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
       
-      <div className="flex flex-col p-4">
+      <div className="flex flex-col p-3 sm:p-4">
         <div className="flex flex-wrap gap-1 mb-2">
-          {tags.slice(0, 3).map((tag) => (
+          {tags && tags.slice(0, 3).map((tag) => (
             <span 
               key={tag} 
               className="text-[10px] px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded-full"
@@ -62,19 +65,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               {tag}
             </span>
           ))}
-          {tags.length > 3 && (
+          {tags && tags.length > 3 && (
             <span className="text-[10px] text-gray-500 dark:text-gray-400 px-1">+{tags.length - 3}</span>
           )}
         </div>
 
-        <h3 className="font-medium text-sm tracking-tight mb-1 line-clamp-1">{title}</h3>
+        <h3 className="font-medium text-sm sm:text-base tracking-tight mb-1 line-clamp-1">{title}</h3>
         
-        <p className="text-gray-600 dark:text-gray-400 line-clamp-2 text-xs mb-2">{description}</p>
+        <p className="text-gray-600 dark:text-gray-400 line-clamp-2 text-xs sm:text-sm mb-2">{description}</p>
         
         <Link 
-          to={link} 
+          to={link || `/projects/${projectId || '1'}`} 
           className={cn(
-            "mt-auto inline-flex items-center text-xs font-medium",
+            "mt-auto inline-flex items-center text-xs sm:text-sm font-medium",
             "text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors",
             "group-hover:underline"
           )}
@@ -86,7 +89,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <a 
-          href={link} 
+          href={link || `/projects/${projectId || '1'}`} 
           target="_blank" 
           rel="noopener noreferrer"
           className="h-6 w-6 flex items-center justify-center rounded-full bg-white/80 dark:bg-black/50 hover:bg-white dark:hover:bg-black/80 transition-colors"
