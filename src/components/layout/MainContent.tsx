@@ -9,10 +9,10 @@ import Contact from '@/components/sections/Contact';
 import Footer from '@/components/layout/Footer';
 import Videos from '@/components/sections/Videos';
 import RecentWorks from '@/components/sections/RecentWorks';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const MainContent: React.FC = () => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
   
   return (
     <main className="flex-1 relative">

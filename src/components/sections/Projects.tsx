@@ -9,11 +9,13 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getFeaturedProjects } from '@/lib/services/firebaseService';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Projects: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   
   const { data: projects, isLoading } = useQuery({
     queryKey: ['featuredProjects'],
@@ -80,44 +82,6 @@ const Projects: React.FC = () => {
     }
   };
 
-  // Fallback projects if none are loaded
-  const fallbackProjects = [
-    {
-      id: '1',
-      title: 'Building Scalable Web Applications with Next.js',
-      description: 'Learn how to build performant and scalable web applications using Next.js and React, with a focus on optimization and best practices.',
-      tags: ['Next.js', 'React', 'Performance'],
-      imageUrl: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80',
-      link: '/projects/1',
-    },
-    {
-      id: '2',
-      title: 'Machine Learning in Production: Best Practices',
-      description: 'A comprehensive guide to deploying and maintaining ML models in production environments, focusing on reliability and scalability.',
-      tags: ['Machine Learning', 'ML Ops', 'Production'],
-      imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
-      link: '/projects/2',
-    },
-    {
-      id: '3',
-      title: 'E-commerce Platform with React and Firebase',
-      description: 'Building a complete e-commerce solution with React on the frontend and Firebase for backend services including auth and database.',
-      tags: ['React', 'Firebase', 'E-commerce'],
-      imageUrl: 'https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=800&q=80',
-      link: '/projects/3',
-    },
-    {
-      id: '4',
-      title: 'AI-Powered Content Recommendation Engine',
-      description: 'Developing a sophisticated recommendation system that leverages machine learning to suggest personalized content to users.',
-      tags: ['AI', 'Python', 'Recommendation Systems'],
-      imageUrl: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=800&q=80',
-      link: '/projects/4',
-    },
-  ];
-
-  const displayProjects = projects && projects.length > 0 ? projects : fallbackProjects;
-
   return (
     <section 
       id="projects" 
@@ -171,23 +135,31 @@ const Projects: React.FC = () => {
           </div>
         ) : (
           <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {displayProjects.map((project, index) => (
-              <motion.div 
-                key={project.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isVisible ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
-              >
-                <ProjectCard
-                  title={project.title}
-                  description={project.description}
-                  tags={project.tags}
-                  imageUrl={project.imageUrl}
-                  link={`/projects/${project.id}`}
-                  className="h-full"
-                />
-              </motion.div>
-            ))}
+            {projects && projects.length > 0 ? (
+              projects.map((project, index) => (
+                <motion.div 
+                  key={project.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
+                >
+                  <ProjectCard
+                    title={project.title}
+                    description={project.description}
+                    tags={project.tags || []}
+                    imageUrl={project.imageUrl}
+                    link={`/projects/${project.id}`}
+                    className="h-full"
+                  />
+                </motion.div>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-8">
+                <p className="text-gray-500 dark:text-gray-400">
+                  No featured projects available. Add projects from the admin dashboard.
+                </p>
+              </div>
+            )}
           </div>
         )}
         
@@ -206,46 +178,56 @@ const Projects: React.FC = () => {
           </div>
         ) : (
           <div className="md:hidden relative">
-            <div 
-              ref={scrollContainerRef}
-              className="flex overflow-x-auto space-x-4 pb-4 scrollbar-none snap-x no-scrollbar"
-            >
-              {displayProjects.map((project, index) => (
-                <motion.div 
-                  key={project.id}
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={isVisible ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
-                  className="flex-shrink-0 w-[80%] snap-center"
+            {projects && projects.length > 0 ? (
+              <>
+                <div 
+                  ref={scrollContainerRef}
+                  className="flex overflow-x-auto space-x-4 pb-4 scrollbar-none snap-x no-scrollbar"
                 >
-                  <ProjectCard
-                    title={project.title}
-                    description={project.description}
-                    tags={project.tags}
-                    imageUrl={project.imageUrl}
-                    link={`/projects/${project.id}`}
-                    className="h-full"
-                  />
-                </motion.div>
-              ))}
-            </div>
-            
-            <div className="flex justify-center mt-4 space-x-2">
-              <button 
-                onClick={() => scroll('left')}
-                className="p-1.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-              </button>
-              <button 
-                onClick={() => scroll('right')}
-                className="p-1.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
-                aria-label="Scroll right"
-              >
-                <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-              </button>
-            </div>
+                  {projects.map((project, index) => (
+                    <motion.div 
+                      key={project.id}
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={isVisible ? { opacity: 1, x: 0 } : {}}
+                      transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
+                      className="flex-shrink-0 w-[80%] snap-center"
+                    >
+                      <ProjectCard
+                        title={project.title}
+                        description={project.description}
+                        tags={project.tags || []}
+                        imageUrl={project.imageUrl}
+                        link={`/projects/${project.id}`}
+                        className="h-full"
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+                
+                <div className="flex justify-center mt-4 space-x-2">
+                  <button 
+                    onClick={() => scroll('left')}
+                    className="p-1.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
+                    aria-label="Scroll left"
+                  >
+                    <ChevronLeft className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  </button>
+                  <button 
+                    onClick={() => scroll('right')}
+                    className="p-1.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
+                    aria-label="Scroll right"
+                  >
+                    <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500 dark:text-gray-400">
+                  No featured projects available. Add projects from the admin dashboard.
+                </p>
+              </div>
+            )}
           </div>
         )}
         

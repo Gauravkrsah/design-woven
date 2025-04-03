@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Globe, Github, ArrowLeft, Loader2, ExternalLink, Share2, Bookmark, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Globe, Github, ArrowLeft, ExternalLink, Share2, Bookmark } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import LeftSidebar from '@/components/layout/LeftSidebar';
@@ -17,6 +17,7 @@ import { getProjectById, getFeaturedProjects } from '@/lib/services/firebaseServ
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Project } from '@/lib/models';
+import { toast } from '@/components/ui/use-toast';
 
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -45,6 +46,23 @@ const ProjectDetail: React.FC = () => {
   
   const goBack = () => {
     navigate('/projects');
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: project?.title || 'Project Details',
+        text: project?.description || 'Check out this project',
+        url: window.location.href,
+      }).catch(err => {
+        console.error('Error sharing:', err);
+      });
+    } else {
+      // Fallback for browsers that don't support navigator.share
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        toast({ title: "Link copied to clipboard", description: "Share it with your network" });
+      });
+    }
   };
   
   const renderContent = () => {
@@ -149,15 +167,7 @@ const ProjectDetail: React.FC = () => {
                 variant="outline" 
                 size="sm" 
                 className="h-8 text-xs sm:text-sm"
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({
-                      title: project.title,
-                      text: project.description,
-                      url: window.location.href,
-                    });
-                  }
-                }}
+                onClick={handleShare}
               >
                 <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share
               </Button>
@@ -166,9 +176,6 @@ const ProjectDetail: React.FC = () => {
                 variant="outline" 
                 size="sm" 
                 className="h-8 text-xs sm:text-sm"
-                onClick={() => {
-                  // Save to bookmarks functionality would go here
-                }}
               >
                 <Bookmark className="h-3.5 w-3.5 mr-1.5" /> Save
               </Button>
@@ -217,7 +224,11 @@ const ProjectDetail: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">More Projects</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredRelatedProjects.map((relatedProject: Project) => (
-                <div key={relatedProject.id} className="bg-gray-50 dark:bg-gray-900/30 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-pointer" onClick={() => navigate(`/projects/${relatedProject.id}`)}>
+                <div 
+                  key={relatedProject.id} 
+                  className="bg-gray-50 dark:bg-gray-900/30 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-pointer" 
+                  onClick={() => navigate(`/projects/${relatedProject.id}`)}
+                >
                   <div className="aspect-video rounded-md overflow-hidden mb-3">
                     <img 
                       src={relatedProject.imageUrl || 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&w=800&q=80'} 
