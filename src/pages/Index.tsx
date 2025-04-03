@@ -13,8 +13,6 @@ import { Button } from '@/components/ui/button';
 import { MessageCircle, Mail, Calendar } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setQueryClientForAPI } from '@/lib/services/apiService';
-import { useWebSocketStatus, initWebSocket } from '@/lib/services/websocketService';
-import { toast } from '@/components/ui/use-toast';
 import { initializeDatabase } from '@/lib/services/firebaseService';
 
 // Global popup states are managed through window object
@@ -45,8 +43,6 @@ const Index: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const isMobile = useIsMobile();
-  // Get WebSocket connection status
-  const wsConnected = useWebSocketStatus();
 
   useEffect(() => {
     document.title = "Portfolio | Full Stack Developer & AI Enthusiast";
@@ -62,17 +58,6 @@ const Index: React.FC = () => {
         console.error("Failed to initialize Firebase database");
       }
     });
-    
-    // Initialize WebSocket connection with retry mechanism
-    const connectWebSocket = () => {
-      const success = initWebSocket();
-      if (!success) {
-        console.log("WebSocket connection failed, retrying...");
-        setTimeout(connectWebSocket, 3000);
-      }
-    };
-    
-    connectWebSocket();
     
     // Show subscribe popup after 5 seconds for new visitors
     const hasVisited = localStorage.getItem('hasVisited');

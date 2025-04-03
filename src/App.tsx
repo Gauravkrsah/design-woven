@@ -18,8 +18,8 @@ import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import AdminLogin from "./pages/Admin/Login";
 import { ThemeProvider } from '@/hooks/use-theme';
-import { initWebSocket, closeWebSocket } from './lib/services/websocketService';
 import { setQueryClientForAPI } from './lib/services/apiService';
+import { initializeDatabase } from './lib/services/firebaseService';
 
 // Auth context for admin access
 export const AuthContext = React.createContext<{
@@ -37,6 +37,8 @@ declare global {
   interface Window {
     openSchedulePopup?: () => void;
     openMessagePopup?: () => void;
+    openChatPopup?: () => void;
+    openSubscribePopup?: () => void;
   }
 }
 
@@ -53,7 +55,15 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const App: React.FC = () => {
   // Create a new QueryClient instance inside the component
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: 1,
+        staleTime: 5 * 60 * 1000, // 5 minutes
+      },
+    },
+  }));
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   // Check if there's already an auth token in localStorage
@@ -62,7 +72,19 @@ const App: React.FC = () => {
     if (token) {
       setIsAuthenticated(true);
     }
-  }, []);
+    
+    // Initialize API service with query client
+    setQueryClientForAPI(queryClient);
+    
+    // Initialize Firebase database
+    initializeDatabase().then(success => {
+      if (success) {
+        console.log("Firebase database initialized successfully");
+      } else {
+        console.error("Failed to initialize Firebase database");
+      }
+    });
+  }, [queryClient]);
 
   const login = (username: string, password: string) => {
     // Simple authentication (in a real app, this would be an API call)
@@ -78,27 +100,6 @@ const App: React.FC = () => {
     localStorage.removeItem('admin_token');
     setIsAuthenticated(false);
   };
-
-  useEffect(() => {
-    // Initialize API service with query client
-    setQueryClientForAPI(queryClient);
-    
-    // Initialize WebSocket with retry mechanism
-    const initWs = () => {
-      const connected = initWebSocket();
-      if (!connected) {
-        // If connection fails, try again after a delay
-        setTimeout(initWs, 3000);
-      }
-    };
-    
-    initWs();
-    
-    // Clean up on unmount
-    return () => {
-      closeWebSocket();
-    };
-  }, [queryClient]);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>

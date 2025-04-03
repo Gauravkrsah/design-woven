@@ -1,96 +1,18 @@
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, Calendar, Play, Mail } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useTheme } from '@/hooks/use-theme';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import gsap from 'gsap';
-import AnimatedText from '../ui/AnimatedText';
+import { motion } from 'framer-motion';
 
 const HeroSection: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { theme } = useTheme();
   
-  useEffect(() => {
-    setIsVisible(true);
-    
-    if (heroRef.current) {
-      // Background animation
-      const dots = Array.from({ length: 30 }).map((_, i) => {
-        const dot = document.createElement('div');
-        dot.className = 'absolute rounded-full opacity-0';
-        dot.style.width = `${Math.random() * 3 + 1}px`;
-        dot.style.height = dot.style.width;
-        dot.style.background = theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
-        dot.style.top = `${Math.random() * 100}%`;
-        dot.style.left = `${Math.random() * 100}%`;
-        heroRef.current?.appendChild(dot);
-        return dot;
-      });
-      
-      gsap.to(dots, {
-        opacity: 0.5,
-        duration: 2,
-        delay: 0.5,
-        stagger: 0.02,
-        ease: 'power2.out'
-      });
-      
-      gsap.to(dots, {
-        y: -20,
-        duration: 8,
-        repeat: -1,
-        yoyo: true,
-        stagger: 0.1,
-        ease: 'sine.inOut'
-      });
-      
-      // Hero content animations
-      const tl = gsap.timeline();
-      
-      tl.from('.hero-badge', {
-        y: -20,
-        opacity: 0,
-        duration: 0.6,
-        ease: 'back.out(1.7)'
-      })
-      .from('.hero-title', {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out'
-      }, "-=0.2")
-      .from('.hero-subtitle', {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out'
-      }, "-=0.4")
-      .from('.hero-buttons', {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power3.out'
-      }, "-=0.4")
-      .from('.hero-stats', {
-        scale: 0.9,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power3.out'
-      }, "-=0.4")
-      .from('.hero-video', {
-        y: 40,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out'
-      }, "-=1");
+  const handleContactClick = () => {
+    if (window.openMessagePopup) {
+      window.openMessagePopup();
     }
-  }, [theme]);
+  };
 
   const handleScheduleClick = () => {
     if (window.openSchedulePopup) {
@@ -99,119 +21,101 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <section 
-      ref={heroRef}
-      className="py-16 md:py-24 px-6 md:px-12 lg:px-16 relative overflow-hidden"
-    >
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-900/5 dark:from-blue-900/10 to-transparent rounded-3xl -z-10"></div>
+    <section className="relative py-16 md:py-24 overflow-hidden">
+      {/* Subtle background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-50/30 to-transparent dark:from-blue-900/10 dark:to-transparent -z-10"></div>
       
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left content */}
-          <div className="lg:col-span-6 transition-all duration-1000 ease-out">
-            <div className="mb-6">
-              <div className="inline-flex items-center gap-2 bg-blue-900/10 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-full text-sm mb-4 border border-blue-500/20 backdrop-blur-sm hero-badge">
-                <span className="animate-pulse h-2 w-2 bg-blue-500 dark:bg-blue-400 rounded-full"></span>
-                <span>Full Stack Developer & AI Enthusiast</span>
-              </div>
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          {/* Text content */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="lg:col-span-6 space-y-6"
+          >
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm mb-4">
+              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse mr-2"></span>
+              <span>Full Stack Developer & AI Enthusiast</span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight hero-title">
-              <AnimatedText 
-                text="Crafting Digital" 
-                className="block" 
-                speed={30}
-              />
-              <AnimatedText 
-                text="Experiences with" 
-                className="block" 
-                speed={30}
-              />
-              <AnimatedText 
-                text="Code & Creativity" 
-                className="block text-blue-600 dark:text-blue-400" 
-                speed={30}
-              />
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
+              <span className="block">Crafting Digital</span>
+              <span className="block">Experiences with</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500">Precision & Innovation</span>
             </h1>
             
-            <p className="text-gray-700 dark:text-gray-300 text-lg md:text-xl mb-8 max-w-2xl hero-subtitle leading-relaxed">
-              Building cutting-edge applications that combine beautiful design with powerful functionality. 
-              Specializing in React, Node.js, and modern web technologies.
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-xl">
+              Building innovative web applications with modern technologies. 
+              Specialized in React, TypeScript, and full-stack development with a focus on 
+              creating exceptional user experiences.
             </p>
             
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 pt-2">
               <Button 
-                className="px-6 py-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white rounded-lg flex items-center gap-2 shadow-lg shadow-blue-600/20 transition-all hover:shadow-blue-500/30 h-12 hero-buttons"
-                onClick={() => {
-                  if (window.openMessagePopup) {
-                    window.openMessagePopup();
-                  }
-                }}
+                className="px-6 py-6 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2"
+                onClick={handleContactClick}
               >
-                <Mail className="w-4 h-4 mr-1" /> Contact Me <ArrowRight className="w-4 h-4 ml-1" />
+                <Mail className="w-4 h-4" /> Contact Me <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
+              
               <Button 
                 variant="outline"
-                className="px-6 py-6 bg-transparent border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white rounded-lg transition-colors flex items-center gap-2 h-12 hero-buttons"
+                className="px-6 py-6 h-12 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all flex items-center gap-2"
                 onClick={handleScheduleClick}
               >
                 <Calendar className="w-4 h-4" /> Schedule a Call
               </Button>
-              <Button 
-                variant="ghost"
-                onClick={() => setShowVideo(true)}
-                className="px-6 py-6 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white rounded-lg transition-colors flex items-center gap-2 group h-12 hero-buttons"
-              >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Play className="w-4 h-4 text-white ml-0.5" fill="white" />
-                </div>
-                <span className="ml-2">Watch Intro</span>
-              </Button>
             </div>
             
-            <div className="mt-16 flex flex-wrap gap-12 justify-start">
-              <div className="hero-stats">
-                <p className="text-4xl font-bold text-gray-900 dark:text-white">5+</p>
-                <p className="text-gray-600 dark:text-gray-400">Years Experience</p>
+            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200 dark:border-gray-800 mt-6">
+              <div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-white">5+</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Years Experience</div>
               </div>
-              <div className="hero-stats">
-                <p className="text-4xl font-bold text-gray-900 dark:text-white">50+</p>
-                <p className="text-gray-600 dark:text-gray-400">Projects Completed</p>
+              <div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-white">50+</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Projects</div>
               </div>
-              <div className="hero-stats">
-                <p className="text-4xl font-bold text-gray-900 dark:text-white">30+</p>
-                <p className="text-gray-600 dark:text-gray-400">Happy Clients</p>
+              <div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-white">30+</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Clients</div>
               </div>
             </div>
-          </div>
+          </motion.div>
           
-          {/* Right content - Video */}
-          <div className="lg:col-span-6 flex justify-center lg:justify-end items-center">
-            <div className="w-full max-w-md relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 shadow-xl hero-video">
-              <div className="aspect-video relative">
+          {/* Video showcase */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="lg:col-span-6"
+          >
+            <div className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-xl">
+              <div className="aspect-video">
                 <img 
                   src="/lovable-uploads/a9ea1072-fb78-4113-93a5-3d8b22ce7d7d.png" 
-                  alt="Featured skills" 
+                  alt="Featured work" 
                   className="w-full h-full object-cover cursor-pointer"
                   onClick={() => setShowVideo(true)}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
-                      <Play className="h-6 w-6 text-white ml-1" fill="white" />
-                    </div>
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center">
+                  <button 
+                    onClick={() => setShowVideo(true)}
+                    className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:scale-110 transition-transform duration-300"
+                  >
+                    <Play className="h-6 w-6 text-white ml-1" />
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-
+      
       {/* Video Dialog */}
       <Dialog open={showVideo} onOpenChange={setShowVideo}>
-        <DialogContent className="sm:max-w-4xl p-1 bg-black border border-gray-800 shadow-2xl">
+        <DialogContent className="sm:max-w-4xl p-0 bg-black border-none">
           <div className="aspect-video w-full">
             <iframe 
               width="100%" 
