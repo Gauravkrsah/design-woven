@@ -264,7 +264,7 @@ const MobileSidebar = ({ open, setOpen, activePage, setActivePage }) => {
 const Dashboard: React.FC = () => {
   const [activePage, setActivePage] = useState('dashboard');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<{ id: number; type: string } | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<{ id: string; type: string } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [isAddingBlogPost, setIsAddingBlogPost] = useState(false);
@@ -319,7 +319,7 @@ const Dashboard: React.FC = () => {
   });
   
   const deleteProjectMutation = useMutation({
-    mutationFn: (id: number) => apiService.deleteProject(id),
+    mutationFn: (id: string) => apiService.deleteProject(id),
     onSuccess: () => {
       toast({
         title: "Project deleted",
@@ -338,7 +338,7 @@ const Dashboard: React.FC = () => {
   });
   
   const deleteBlogPostMutation = useMutation({
-    mutationFn: (id: number) => apiService.deleteBlogPost(id),
+    mutationFn: (id: string) => apiService.deleteBlogPost(id),
     onSuccess: () => {
       toast({
         title: "Blog post deleted",
@@ -357,7 +357,7 @@ const Dashboard: React.FC = () => {
   });
   
   const deleteMessageMutation = useMutation({
-    mutationFn: (id: number) => apiService.deleteMessage(id),
+    mutationFn: (id: string) => apiService.deleteMessage(id),
     onSuccess: () => {
       toast({
         title: "Message deleted",
@@ -376,7 +376,7 @@ const Dashboard: React.FC = () => {
   });
   
   const deleteOtherWorkMutation = useMutation({
-    mutationFn: (id: number) => apiService.deleteOtherWork(id),
+    mutationFn: (id: string) => apiService.deleteOtherWork(id),
     onSuccess: () => {
       toast({
         title: "Other work deleted",
@@ -395,7 +395,7 @@ const Dashboard: React.FC = () => {
   });
   
   const markAsReadMutation = useMutation({
-    mutationFn: (id: number) => apiService.markMessageAsRead(id),
+    mutationFn: (id: string) => apiService.markMessageAsRead(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
@@ -421,7 +421,7 @@ const Dashboard: React.FC = () => {
     }
   };
   
-  const handleDelete = (id: number, type: string) => {
+  const handleDelete = (id: string, type: string) => {
     setItemToDelete({ id, type });
     setDeleteDialogOpen(true);
   };
@@ -445,7 +445,7 @@ const Dashboard: React.FC = () => {
     setItemToDelete(null);
   };
   
-  const handleView = (id: number, type: string) => {
+  const handleView = (id: string, type: string) => {
     if (type === 'message') {
       markAsReadMutation.mutate(id);
       

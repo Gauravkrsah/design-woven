@@ -1,3 +1,4 @@
+
 import { Project, BlogPost, OtherWork, Content, Message, Meeting, Subscriber } from '@/lib/models';
 import { useQuery } from '@tanstack/react-query';
 
@@ -36,7 +37,7 @@ export interface DashboardStats {
 // Mock data (replace with actual API calls later)
 let mockProjects: Project[] = [
   {
-    id: 1,
+    id: "1",
     title: 'AI-Powered Social Media Dashboard',
     description: 'A dashboard that uses AI to analyze social media trends and engagement metrics.',
     imageUrl: '/lovable-uploads/63af4e30-199c-4e86-acf9-0c456ce84647.png',
@@ -53,7 +54,7 @@ let mockProjects: Project[] = [
     updatedAt: '2023-01-01T00:00:00.000Z',
   },
   {
-    id: 2,
+    id: "2",
     title: 'E-commerce Mobile App',
     description: 'A mobile app for an e-commerce platform, built with React Native.',
     imageUrl: '/lovable-uploads/71ebdfd0-b894-428b-8b13-23379499b18b.png',
@@ -68,7 +69,7 @@ let mockProjects: Project[] = [
     updatedAt: '2023-02-15T00:00:00.000Z',
   },
   {
-    id: 3,
+    id: "3",
     title: 'Personal Portfolio Website',
     description: 'A personal portfolio website built with Next.js and Tailwind CSS.',
     imageUrl: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&w=800&q=80',
@@ -86,7 +87,7 @@ let mockProjects: Project[] = [
 
 let mockBlogPosts: BlogPost[] = [
   {
-    id: 1,
+    id: "1",
     title: 'The Future of AI in Web Development',
     excerpt: 'An article discussing the potential impact of AI on web development.',
     content: 'An article discussing the potential impact of AI on web development.',
@@ -100,7 +101,7 @@ let mockBlogPosts: BlogPost[] = [
     updatedAt: '2023-04-01T00:00:00.000Z',
   },
   {
-    id: 2,
+    id: "2",
     title: 'Mastering React Hooks',
     excerpt: 'A guide to understanding and using React Hooks effectively.',
     content: 'A guide to understanding and using React Hooks effectively.',
@@ -117,7 +118,7 @@ let mockBlogPosts: BlogPost[] = [
 
 let mockOtherWorks: OtherWork[] = [
   {
-    id: 1,
+    id: "1",
     title: 'Open Source Contribution to React Native Elements',
     description: 'Contributed a new component to the React Native Elements library.',
     content: 'Contributed a new component to the React Native Elements library.',
@@ -131,7 +132,7 @@ let mockOtherWorks: OtherWork[] = [
     updatedAt: '2023-06-01T00:00:00.000Z',
   },
   {
-    id: 2,
+    id: "2",
     title: 'Created a Chrome Extension for Productivity',
     description: 'Developed a Chrome extension to help users stay focused and productive.',
     content: 'Developed a Chrome extension to help users stay focused and productive.',
@@ -148,7 +149,7 @@ let mockOtherWorks: OtherWork[] = [
 
 let mockVideos: Content[] = [
   {
-    id: 1,
+    id: "1",
     title: 'Building a REST API with Node.js and Express',
     description: 'Learn how to build a REST API using Node.js and Express.',
     imageUrl: 'https://i.ytimg.com/vi/vjf774RKrLc/maxresdefault.jpg',
@@ -169,7 +170,7 @@ let mockVideos: Content[] = [
     updatedAt: '2023-08-01T00:00:00.000Z',
   },
   {
-    id: 2,
+    id: "2",
     title: 'Getting Started with React Native',
     description: 'A beginner-friendly guide to React Native development.',
     imageUrl: 'https://i.ytimg.com/vi/qSRrxpdMpVc/maxresdefault.jpg',
@@ -193,7 +194,7 @@ let mockVideos: Content[] = [
 
 let mockMessages: Message[] = [
   {
-    id: 1,
+    id: "1",
     name: 'John Doe',
     email: 'john@example.com',
     subject: 'Project Inquiry',
@@ -202,7 +203,7 @@ let mockMessages: Message[] = [
     createdAt: '2023-10-01T00:00:00.000Z',
   },
   {
-    id: 2,
+    id: "2",
     name: 'Jane Smith',
     email: 'jane@example.com',
     subject: 'Collaboration Opportunity',
@@ -211,7 +212,7 @@ let mockMessages: Message[] = [
     createdAt: '2023-10-05T00:00:00.000Z',
   },
   {
-    id: 3,
+    id: "3",
     name: 'Michael Johnson',
     email: 'michael@example.com',
     subject: 'Speaking Engagement',
@@ -223,7 +224,7 @@ let mockMessages: Message[] = [
 
 let mockMeetings: Meeting[] = [
   {
-    id: 1,
+    id: "1",
     name: 'Sarah Wilson',
     email: 'sarah@example.com',
     subject: 'Initial Project Discussion',
@@ -234,7 +235,7 @@ let mockMeetings: Meeting[] = [
     createdAt: '2023-10-15T00:00:00.000Z',
   },
   {
-    id: 2,
+    id: "2",
     name: 'David Thompson',
     email: 'david@example.com',
     subject: 'Portfolio Review',
@@ -248,14 +249,14 @@ let mockMeetings: Meeting[] = [
 
 let mockSubscribers: Subscriber[] = [
   {
-    id: 1,
+    id: "1",
     email: 'subscriber1@example.com',
     name: 'Alex Turner',
     subscriptionDate: '2023-09-01T00:00:00.000Z',
     active: true,
   },
   {
-    id: 2,
+    id: "2",
     email: 'subscriber2@example.com',
     name: 'Emily Davis',
     subscriptionDate: '2023-09-15T00:00:00.000Z',
@@ -296,7 +297,7 @@ export const getProjects = async (): Promise<Project[]> => {
 };
 
 // Function to fetch a single project by ID
-export const getProjectById = async (id: number): Promise<Project | undefined> => {
+export const getProjectById = async (id: string): Promise<Project | undefined> => {
   await simulateApiDelay();
   return mockProjects.find(project => project.id === id);
 };
@@ -308,7 +309,7 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
 };
 
 // Function to fetch a single blog post by ID
-export const getBlogPostById = async (id: number): Promise<BlogPost | undefined> => {
+export const getBlogPostById = async (id: string): Promise<BlogPost | undefined> => {
   await simulateApiDelay();
   return mockBlogPosts.find(blogPost => blogPost.id === id);
 };
@@ -320,7 +321,7 @@ export const getOtherWorks = async (): Promise<OtherWork[]> => {
 };
 
 // Function to fetch a single other work by ID
-export const getOtherWorkById = async (id: number): Promise<OtherWork | undefined> => {
+export const getOtherWorkById = async (id: string): Promise<OtherWork | undefined> => {
   await simulateApiDelay();
   return mockOtherWorks.find(otherWork => otherWork.id === id);
 };
@@ -332,7 +333,7 @@ export const getVideos = async (): Promise<Content[]> => {
 };
 
 // Function to fetch a single video by ID
-export const getVideoById = async (id: number): Promise<Content | undefined> => {
+export const getVideoById = async (id: string): Promise<Content | undefined> => {
   await simulateApiDelay();
   return mockVideos.find(video => video.id === id);
 };
@@ -345,7 +346,7 @@ export const createProject = async (project: Omit<Project, 'id' | 'createdAt' | 
   const now = new Date().toISOString();
   const newProject: Project = {
     ...project,
-    id: mockProjects.length + 1,
+    id: (mockProjects.length + 1).toString(),
     createdAt: now,
     updatedAt: now
   };
@@ -356,7 +357,7 @@ export const createProject = async (project: Omit<Project, 'id' | 'createdAt' | 
   return newProject;
 };
 
-export const updateProject = async (id: number, project: Partial<Project>): Promise<Project> => {
+export const updateProject = async (id: string, project: Partial<Project>): Promise<Project> => {
   await simulateApiDelay();
   
   const index = mockProjects.findIndex(p => p.id === id);
@@ -376,7 +377,7 @@ export const updateProject = async (id: number, project: Partial<Project>): Prom
   return updatedProject;
 };
 
-export const deleteProject = async (id: number): Promise<void> => {
+export const deleteProject = async (id: string): Promise<void> => {
   await simulateApiDelay();
   
   const index = mockProjects.findIndex(p => p.id === id);
@@ -394,7 +395,7 @@ export const createBlogPost = async (blogPost: Omit<BlogPost, 'id' | 'createdAt'
   const now = new Date().toISOString();
   const newBlogPost: BlogPost = {
     ...blogPost,
-    id: mockBlogPosts.length + 1,
+    id: (mockBlogPosts.length + 1).toString(),
     createdAt: now,
     updatedAt: now,
     readingTime: blogPost.readTime || `${Math.floor(Math.random() * 10) + 3} min read`
@@ -406,7 +407,7 @@ export const createBlogPost = async (blogPost: Omit<BlogPost, 'id' | 'createdAt'
   return newBlogPost;
 };
 
-export const updateBlogPost = async (id: number, blogPost: Partial<BlogPost>): Promise<BlogPost> => {
+export const updateBlogPost = async (id: string, blogPost: Partial<BlogPost>): Promise<BlogPost> => {
   await simulateApiDelay();
   
   const index = mockBlogPosts.findIndex(p => p.id === id);
@@ -426,7 +427,7 @@ export const updateBlogPost = async (id: number, blogPost: Partial<BlogPost>): P
   return updatedBlogPost;
 };
 
-export const deleteBlogPost = async (id: number): Promise<void> => {
+export const deleteBlogPost = async (id: string): Promise<void> => {
   await simulateApiDelay();
   
   const index = mockBlogPosts.findIndex(p => p.id === id);
@@ -444,7 +445,7 @@ export const createOtherWork = async (otherWork: Omit<OtherWork, 'id' | 'created
   const now = new Date().toISOString();
   const newOtherWork: OtherWork = {
     ...otherWork,
-    id: mockOtherWorks.length + 1,
+    id: (mockOtherWorks.length + 1).toString(),
     createdAt: now,
     updatedAt: now
   };
@@ -455,7 +456,7 @@ export const createOtherWork = async (otherWork: Omit<OtherWork, 'id' | 'created
   return newOtherWork;
 };
 
-export const updateOtherWork = async (id: number, otherWork: Partial<OtherWork>): Promise<OtherWork> => {
+export const updateOtherWork = async (id: string, otherWork: Partial<OtherWork>): Promise<OtherWork> => {
   await simulateApiDelay();
   
   const index = mockOtherWorks.findIndex(p => p.id === id);
@@ -475,7 +476,7 @@ export const updateOtherWork = async (id: number, otherWork: Partial<OtherWork>)
   return updatedOtherWork;
 };
 
-export const deleteOtherWork = async (id: number): Promise<void> => {
+export const deleteOtherWork = async (id: string): Promise<void> => {
   await simulateApiDelay();
   
   const index = mockOtherWorks.findIndex(p => p.id === id);
@@ -493,7 +494,7 @@ export const createVideo = async (video: Omit<Content, 'id' | 'createdAt' | 'upd
   const now = new Date().toISOString();
   const newVideo: Content = {
     ...video,
-    id: mockVideos.length + 1,
+    id: (mockVideos.length + 1).toString(),
     createdAt: now,
     updatedAt: now,
     thumbnailUrl: video.thumbnailUrl || video.imageUrl,
@@ -506,7 +507,7 @@ export const createVideo = async (video: Omit<Content, 'id' | 'createdAt' | 'upd
   return newVideo;
 };
 
-export const updateVideo = async (id: number, video: Partial<Content>): Promise<Content> => {
+export const updateVideo = async (id: string, video: Partial<Content>): Promise<Content> => {
   await simulateApiDelay();
   
   const index = mockVideos.findIndex(v => v.id === id);
@@ -530,7 +531,7 @@ export const updateVideo = async (id: number, video: Partial<Content>): Promise<
   return updatedVideo;
 };
 
-export const deleteVideo = async (id: number): Promise<void> => {
+export const deleteVideo = async (id: string): Promise<void> => {
   await simulateApiDelay();
   
   const index = mockVideos.findIndex(v => v.id === id);
@@ -543,7 +544,7 @@ export const deleteVideo = async (id: number): Promise<void> => {
 };
 
 // Function to increment views for a video
-export const incrementVideoViews = async (id: number): Promise<Content | undefined> => {
+export const incrementVideoViews = async (id: string): Promise<Content | undefined> => {
   await simulateApiDelay();
 
   const index = mockVideos.findIndex(v => v.id === id);
@@ -566,7 +567,7 @@ export const getMessages = async (): Promise<Message[]> => {
   return mockMessages;
 };
 
-export const getMessageById = async (id: number): Promise<Message | undefined> => {
+export const getMessageById = async (id: string): Promise<Message | undefined> => {
   await simulateApiDelay();
   return mockMessages.find(message => message.id === id);
 };
@@ -577,7 +578,7 @@ export const createMessage = async (message: Omit<Message, 'id' | 'createdAt' | 
   const now = new Date().toISOString();
   const newMessage: Message = {
     ...message,
-    id: mockMessages.length + 1,
+    id: (mockMessages.length + 1).toString(),
     read: false,
     createdAt: now,
   };
@@ -588,7 +589,7 @@ export const createMessage = async (message: Omit<Message, 'id' | 'createdAt' | 
   return newMessage;
 };
 
-export const markMessageAsRead = async (id: number): Promise<Message> => {
+export const markMessageAsRead = async (id: string): Promise<Message> => {
   await simulateApiDelay();
   
   const index = mockMessages.findIndex(m => m.id === id);
@@ -602,7 +603,7 @@ export const markMessageAsRead = async (id: number): Promise<Message> => {
   return mockMessages[index];
 };
 
-export const deleteMessage = async (id: number): Promise<void> => {
+export const deleteMessage = async (id: string): Promise<void> => {
   await simulateApiDelay();
   
   const index = mockMessages.findIndex(m => m.id === id);
