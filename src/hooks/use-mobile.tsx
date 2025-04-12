@@ -1,5 +1,5 @@
 
-import * as React from "react"
+import * as React from "react";
 
 // Different breakpoints for more precise responsive designs
 export const BREAKPOINTS = {
@@ -8,51 +8,75 @@ export const BREAKPOINTS = {
   md: 768,
   lg: 1024,
   xl: 1280,
-  '2xl': 1536
-}
+  "2xl": 1536,
+};
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean>(
-    typeof window !== 'undefined' ? window.innerWidth < BREAKPOINTS.md : false
-  )
+    typeof window !== "undefined" ? window.innerWidth < BREAKPOINTS.md : false
+  );
 
   React.useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < BREAKPOINTS.md)
-    }
+      setIsMobile(window.innerWidth < BREAKPOINTS.md);
+    };
     
     // Initial check
-    checkIfMobile()
+    checkIfMobile();
     
     // Add event listener
-    window.addEventListener('resize', checkIfMobile)
+    window.addEventListener("resize", checkIfMobile);
     
     // Clean up
-    return () => window.removeEventListener('resize', checkIfMobile)
-  }, [])
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, []);
 
-  return isMobile
+  return isMobile;
 }
 
 export function useBreakpoint(breakpoint: keyof typeof BREAKPOINTS) {
   const [isBelow, setIsBelow] = React.useState<boolean>(
-    typeof window !== 'undefined' ? window.innerWidth < BREAKPOINTS[breakpoint] : false
-  )
+    typeof window !== "undefined" ? window.innerWidth < BREAKPOINTS[breakpoint] : false
+  );
 
   React.useEffect(() => {
     const checkBreakpoint = () => {
-      setIsBelow(window.innerWidth < BREAKPOINTS[breakpoint])
-    }
+      setIsBelow(window.innerWidth < BREAKPOINTS[breakpoint]);
+    };
     
     // Initial check
-    checkBreakpoint()
+    checkBreakpoint();
     
     // Add event listener
-    window.addEventListener('resize', checkBreakpoint)
+    window.addEventListener("resize", checkBreakpoint);
     
     // Clean up
-    return () => window.removeEventListener('resize', checkBreakpoint)
-  }, [breakpoint])
+    return () => window.removeEventListener("resize", checkBreakpoint);
+  }, [breakpoint]);
 
-  return isBelow
+  return isBelow;
+}
+
+// Additional hook to get current viewport width for more precise responsive layouts
+export function useViewportWidth() {
+  const [width, setWidth] = React.useState<number>(
+    typeof window !== "undefined" ? window.innerWidth : 0
+  );
+
+  React.useEffect(() => {
+    const updateWidth = () => {
+      setWidth(window.innerWidth);
+    };
+    
+    // Initial width
+    updateWidth();
+    
+    // Add event listener
+    window.addEventListener("resize", updateWidth);
+    
+    // Clean up
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  return width;
 }

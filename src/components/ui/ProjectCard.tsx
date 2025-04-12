@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowRight, ExternalLink, Github } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -11,6 +11,8 @@ interface ProjectCardProps {
   tags: string[];
   imageUrl: string;
   link: string;
+  githubLink?: string;
+  liveDemo?: string;
   className?: string;
 }
 
@@ -20,6 +22,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   tags,
   imageUrl,
   link,
+  githubLink,
+  liveDemo,
   className,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -32,7 +36,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       className={cn(
         "group relative overflow-hidden rounded-xl bg-white/5 dark:bg-[#111] text-gray-900 dark:text-white transition-all duration-300",
         "border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700",
-        "hover:shadow-xl",
+        "hover:shadow-xl h-full flex flex-col",
         className
       )}
       onMouseEnter={() => setIsHovered(true)}
@@ -55,7 +59,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
       
-      <div className="flex flex-col p-3 sm:p-4">
+      <div className="flex flex-col p-3 sm:p-4 flex-grow">
         <div className="flex flex-wrap gap-1 mb-2">
           {tags && tags.slice(0, 3).map((tag) => (
             <span 
@@ -74,17 +78,45 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         
         <p className="text-gray-600 dark:text-gray-400 line-clamp-2 text-xs sm:text-sm mb-2">{description}</p>
         
-        <Link 
-          to={link || `/projects/${projectId || '1'}`} 
-          className={cn(
-            "mt-auto inline-flex items-center text-xs sm:text-sm font-medium",
-            "text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors",
-            "group-hover:underline"
-          )}
-        >
-          View Project 
-          <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
-        </Link>
+        <div className="mt-auto flex flex-col gap-2">
+          <Link 
+            to={link || `/projects/${projectId || '1'}`} 
+            className={cn(
+              "inline-flex items-center text-xs sm:text-sm font-medium",
+              "text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors",
+              "group-hover:underline"
+            )}
+          >
+            View Details 
+            <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
+          </Link>
+          
+          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+            {githubLink && (
+              <a 
+                href={githubLink} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center hover:text-gray-700 dark:hover:text-gray-300"
+              >
+                <Github className="h-3 w-3 mr-1" />
+                Code
+              </a>
+            )}
+            
+            {liveDemo && (
+              <a 
+                href={liveDemo} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center hover:text-gray-700 dark:hover:text-gray-300"
+              >
+                <ExternalLink className="h-3 w-3 mr-1" />
+                Demo
+              </a>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
