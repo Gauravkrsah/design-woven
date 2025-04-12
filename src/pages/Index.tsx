@@ -14,6 +14,7 @@ import { MessageCircle, Mail, Calendar } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setQueryClientForAPI } from '@/lib/services/apiService';
 import { initializeDatabase } from '@/lib/services/firebaseService';
+import { ThemeProvider } from '@/hooks/use-theme';
 
 // Global popup states are managed through window object
 // Each page can trigger these popups
@@ -61,7 +62,7 @@ const Index: React.FC = () => {
     
     // Show subscribe popup after 5 seconds for new visitors
     const hasVisited = localStorage.getItem('hasVisited');
-    if (!hasVisited && !isMobile) {
+    if (!hasVisited && !isMobile && typeof window !== 'undefined') {
       const timer = setTimeout(() => {
         setIsSubscribeOpen(true);
         localStorage.setItem('hasVisited', 'true');
@@ -93,89 +94,93 @@ const Index: React.FC = () => {
 
   // Make these functions available globally
   React.useEffect(() => {
-    window.openSubscribePopup = openSubscribePopup;
-    window.openMessagePopup = openMessagePopup;
-    window.openChatPopup = openChatPopup;
-    window.openSchedulePopup = openSchedulePopup;
-    
-    return () => {
-      delete window.openSubscribePopup;
-      delete window.openMessagePopup;
-      delete window.openChatPopup;
-      delete window.openSchedulePopup;
-    };
+    if (typeof window !== 'undefined') {
+      window.openSubscribePopup = openSubscribePopup;
+      window.openMessagePopup = openMessagePopup;
+      window.openChatPopup = openChatPopup;
+      window.openSchedulePopup = openSchedulePopup;
+      
+      return () => {
+        delete window.openSubscribePopup;
+        delete window.openMessagePopup;
+        delete window.openChatPopup;
+        delete window.openSchedulePopup;
+      };
+    }
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="flex flex-col min-h-screen bg-background text-foreground">
-        {/* Mobile navbar - only visible on mobile */}
-        <MobileNavbar />
-        
-        <div className="flex flex-1 pt-[60px] lg:pt-0">
-          {/* Left sidebar - hidden on mobile */}
-          <div className="hidden lg:block sticky top-0 h-screen">
-            <LeftSidebar />
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <div className="flex flex-col min-h-screen bg-background text-foreground">
+          {/* Mobile navbar - only visible on mobile */}
+          <MobileNavbar />
+          
+          <div className="flex flex-1 pt-[60px] lg:pt-0">
+            {/* Left sidebar - hidden on mobile */}
+            <div className="hidden lg:block sticky top-0 h-screen">
+              <LeftSidebar />
+            </div>
+            
+            {/* Main content - always visible */}
+            <MainContent />
+            
+            {/* Right sidebar - hidden on mobile */}
+            <div className="hidden lg:block sticky top-0 h-screen">
+              <RightSidebar />
+            </div>
           </div>
           
-          {/* Main content - always visible */}
-          <MainContent />
+          {/* Mobile floating action buttons */}
+          {isMobile && (
+            <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2">
+              <Button 
+                size="icon" 
+                className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+                onClick={openMessagePopup}
+              >
+                <Mail className="h-4 w-4" />
+              </Button>
+              <Button 
+                size="icon" 
+                className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+                onClick={openChatPopup}
+              >
+                <MessageCircle className="h-4 w-4" />
+              </Button>
+              <Button 
+                size="icon" 
+                className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
+                onClick={openSchedulePopup}
+              >
+                <Calendar className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
           
-          {/* Right sidebar - hidden on mobile */}
-          <div className="hidden lg:block sticky top-0 h-screen">
-            <RightSidebar />
-          </div>
-        </div>
-        
-        {/* Mobile floating action buttons */}
-        {isMobile && (
-          <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2">
-            <Button 
-              size="icon" 
-              className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-              onClick={openMessagePopup}
-            >
-              <Mail className="h-4 w-4" />
-            </Button>
-            <Button 
-              size="icon" 
-              className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-              onClick={openChatPopup}
-            >
-              <MessageCircle className="h-4 w-4" />
-            </Button>
-            <Button 
-              size="icon" 
-              className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-500 shadow-lg"
-              onClick={openSchedulePopup}
-            >
-              <Calendar className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
-        
-        {/* Popups */}
-        <SubscribePopup 
-          open={isSubscribeOpen} 
-          onOpenChange={setIsSubscribeOpen} 
-        />
-        
-        <MessagePopup 
-          open={isMessageOpen} 
-          onOpenChange={setIsMessageOpen} 
-        />
-        
-        <ChatPopup 
-          open={isChatOpen} 
-          onOpenChange={setIsChatOpen} 
-        />
+          {/* Popups */}
+          <SubscribePopup 
+            open={isSubscribeOpen} 
+            onOpenChange={setIsSubscribeOpen} 
+          />
+          
+          <MessagePopup 
+            open={isMessageOpen} 
+            onOpenChange={setIsMessageOpen} 
+          />
+          
+          <ChatPopup 
+            open={isChatOpen} 
+            onOpenChange={setIsChatOpen} 
+          />
 
-        <SchedulePopup
-          open={isScheduleOpen}
-          onOpenChange={setIsScheduleOpen}
-        />
-      </div>
-    </QueryClientProvider>
+          <SchedulePopup
+            open={isScheduleOpen}
+            onOpenChange={setIsScheduleOpen}
+          />
+        </div>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 };
 

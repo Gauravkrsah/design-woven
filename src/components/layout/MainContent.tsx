@@ -2,14 +2,11 @@
 import React, { useEffect } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HeroSection from '@/components/sections/HeroSection';
-import Projects from '@/components/sections/Projects';
 import SkillsSection from '@/components/sections/SkillsSection';
-import RecentBlogs from '@/components/sections/RecentBlogs';
 import Contact from '@/components/sections/Contact';
 import Footer from '@/components/layout/Footer';
-import Videos from '@/components/sections/Videos';
-import RecentWorks from '@/components/sections/RecentWorks';
 import { useViewportWidth } from '@/hooks/use-mobile';
+import About from '@/components/sections/About';
 
 const MainContent: React.FC = () => {
   const viewportWidth = useViewportWidth();
@@ -38,11 +35,8 @@ const MainContent: React.FC = () => {
       <ScrollArea className="h-screen w-full">
         <div className={`${containerPadding} max-w-screen-2xl mx-auto`}>
           <HeroSection />
-          <Videos />
+          <About />
           <SkillsSection />
-          <Projects />
-          <RecentWorks />
-          <RecentBlogs />
           <Contact />
           <Footer />
         </div>
