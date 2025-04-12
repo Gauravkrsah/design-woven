@@ -30,20 +30,22 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem(storageKey) as Theme;
-    if (savedTheme) {
-      return savedTheme;
-    }
-    
-    if (defaultTheme === 'system') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem(storageKey) as Theme;
+      if (savedTheme) {
+        return savedTheme;
+      }
+      
+      if (defaultTheme === 'system') {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
     }
     
     return defaultTheme;
   });
   
   const [resolvedTheme, setResolvedTheme] = useState<'dark' | 'light'>(
-    theme === 'system'
+    theme === 'system' && typeof window !== 'undefined'
       ? window.matchMedia('(prefers-color-scheme: dark)').matches
         ? 'dark'
         : 'light'
@@ -51,6 +53,8 @@ export function ThemeProvider({
   );
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const root = window.document.documentElement;
     
     root.classList.remove('light', 'dark');
@@ -94,7 +98,7 @@ export function ThemeProvider({
   
   // Listen for system theme changes when using system theme
   useEffect(() => {
-    if (theme !== 'system') return;
+    if (typeof window === 'undefined' || theme !== 'system') return;
     
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
@@ -113,7 +117,9 @@ export function ThemeProvider({
   const value = {
     theme,
     setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(storageKey, theme);
+      }
       setTheme(theme);
     },
     resolvedTheme,
